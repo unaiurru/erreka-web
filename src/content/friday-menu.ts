@@ -1,0 +1,213 @@
+/**
+ * Menú del día (viernes). Bilingüe.
+ *
+ * Cada plato es un objeto FridayDish. Si tiene `image` o `preparation`,
+ * será clickable en la web y abrirá el modal con foto + detalles
+ * (igual que los platos de la carta).
+ *
+ * Los IDs llevan prefijo `fm-` para no colisionar con los de la carta.
+ */
+
+import type { Allergen } from './menu';
+
+export type FridayDish = {
+  id: string;
+  name: { es: string; eu: string };
+  image?: string;
+  desc?: { es: string; eu: string };
+  preparation?: { es: string; eu: string };
+  allergens?: Allergen[];
+};
+
+export type FridayCourseKey = 'starter' | 'main' | 'dessert' | 'drink';
+
+const starter: FridayDish[] = [
+  {
+    id: 'fm-ensalada-cabra',
+    name: {
+      es: 'Ensalada templada de queso de cabra',
+      eu: 'Ahuntz-gaztaren entsalada epela',
+    },
+    image: '/images/dishes/fm-ensalada-cabra.jpg',
+    preparation: {
+      es: 'Mezcla de lechugas frescas con queso de cabra gratinado, frutos secos tostados, mermelada de tomate y vinagreta de miel y mostaza. Servida templada para que el queso se funda ligeramente sobre las hojas.',
+      eu: 'Letxuga fresko nahasketa, gratinatutako ahuntz-gaztarekin, fruitu lehor txigortuekin, tomate marmeladarekin eta ezti eta mostaza binagretarekin. Epela zerbitzatzen da, gazta orriaren gainean apur bat urtu dadin.',
+    },
+    allergens: ['lacteos', 'frutos_secos', 'mostaza', 'sulfitos'],
+  },
+  {
+    id: 'fm-paella-carne',
+    name: { es: 'Paella de carne', eu: 'Haragizko paella' },
+    image: '/images/dishes/fm-paella-carne.jpg',
+    preparation: {
+      es: 'Arroz bomba sofrito con pollo, conejo y costilla de cerdo, caldo casero de carne reducido y un toque de azafrán. Cocción tradicional en paellera para conseguir socarrat en el fondo.',
+      eu: 'Bomba arroza, oilasko, untxi eta txerri-saiheskiarekin sofrituta, etxeko haragi-salda laburtuarekin eta azafrai ukitu batekin. Sukaldaritza tradizionala paelleran, hondoan socarrat lortzeko.',
+    },
+    allergens: ['apio'],
+  },
+  {
+    id: 'fm-cocido',
+    name: { es: 'Cocido del día', eu: 'Eguneko egosia' },
+    image: '/images/dishes/fm-cocido.jpg',
+    preparation: {
+      es: 'Cocido tradicional de garbanzos, carne de morcillo, chorizo, tocino y verduras de temporada. Cocción larga a fuego bajo durante 4 horas. Servido con su caldo aparte.',
+      eu: 'Garbantzu, morcillo haragi, txorizo, urdai eta denboraldiko barazkiekin eginiko egosi tradizionala. 4 orduz su geldoan, kozinatze luzea. Bere saldarekin aparte zerbitzatzen da.',
+    },
+    allergens: ['apio', 'sulfitos'],
+  },
+  {
+    id: 'fm-revuelto-setas',
+    name: { es: 'Revuelto de setas y ajos', eu: 'Onddo eta baratxuri nahasia' },
+    image: '/images/dishes/fm-revuelto-setas.jpg',
+    preparation: {
+      es: 'Setas de temporada salteadas a fuego fuerte con ajo laminado y un toque de aceite de oliva virgen extra. Se cuajan despacio con huevo de caserío hasta lograr una textura cremosa, sin cocer en exceso. Servido con una pizca de perejil fresco.',
+      eu: 'Denboraldiko onddoak su biziz salteatuta, baratxuri xerratuekin eta oliba olio birjina estra ukitu batekin. Baserriko arrautzarekin poliki gatzatzen dira, testura kremosoa lortu arte, gehiegi egosi gabe. Perretxilu fresko ukitu batekin zerbitzatzen da.',
+    },
+    allergens: ['huevo'],
+  },
+];
+
+const main: FridayDish[] = [
+  {
+    id: 'fm-pollo-roquefort',
+    name: {
+      es: 'Pollo crispy al roquefort con patatas',
+      eu: 'Oilasko crispy roquefortarekin eta patatekin',
+    },
+    image: '/images/dishes/fm-pollo-roquefort.jpg',
+    preparation: {
+      es: 'Solomillos de pollo empanados en panko crujiente, fritos al momento. Bañados en una salsa cremosa de queso roquefort con un toque de nata y pimienta negra recién molida. Patatas fritas caseras de acompañamiento.',
+      eu: 'Oilasko-azpizunak panko krakatsuan enpanatuak, momentuan frijituak. Roquefort gaztaren saltsa kremoso batean bustiak, esnegain ukitu batekin eta orain ehotutako piper beltzarekin. Etxeko patata frijituak laguntzeko.',
+    },
+    allergens: ['gluten', 'lacteos', 'huevo'],
+  },
+  {
+    id: 'fm-milanesa-cerdo',
+    name: {
+      es: 'Milanesa de cerdo con pimientos y patatas',
+      eu: 'Txerri-milanesa piper eta patatekin',
+    },
+    image: '/images/dishes/fm-milanesa-cerdo.jpg',
+    preparation: {
+      es: 'Filete de cerdo majado y empanado al estilo milanesa: harina, huevo y pan rallado con perejil. Frito en aceite de oliva. Acompañado de pimientos rojos asados y patatas panaderas.',
+      eu: 'Txerri-xerra jotako eta milanesa erara enpanatua: irina, arrautza eta perretxiluarekin pan ralladuna. Oliba olioan frijitua. Piper gorri erreekin eta okindegi-erako patatekin lagunduta.',
+    },
+    allergens: ['gluten', 'huevo'],
+  },
+  {
+    id: 'fm-pimientos-bacalao',
+    name: {
+      es: 'Pimientos de bacalao con salsa de piquillo',
+      eu: 'Bakailao-piperrak piquillo saltsarekin',
+    },
+    image: '/images/dishes/fm-pimientos-bacalao.jpg',
+    preparation: {
+      es: 'Pimientos del piquillo rellenos de bacalao desmigado y bechamel suave. Horneados y bañados en salsa de pimientos del piquillo emulsionada con caldo de pescado. Plato clásico vasco.',
+      eu: 'Piquillo piperrak bakailao xehatuz eta bechamel leunaz beteak. Labean eginak eta arraintzaldarekin emultsifikatutako piquillo piperren saltsan bustiak. Euskal plater klasikoa.',
+    },
+    allergens: ['gluten', 'lacteos', 'pescado'],
+  },
+  {
+    id: 'fm-escalopines-merluza',
+    name: {
+      es: 'Escalopines de merluza con salsa de txipis',
+      eu: 'Legatz-eskalopinak txipiroi saltsarekin',
+    },
+    image: '/images/dishes/fm-escalopines-merluza.jpg',
+    preparation: {
+      es: 'Lomos de merluza fresca enharinados y pasados por la plancha. Bañados en una salsa negra elaborada con tinta de chipirón, cebolla pochada y un punto de vino blanco. Acompañado de arroz blanco.',
+      eu: 'Legatz fresko hegaldoak irinetan pasatuak eta plantxan eginak. Txipiroi-tinta, kipula pochée eta ardo zuri ukitu batez egindako saltsa beltzean bustiak. Arroz zuri lagungarriarekin.',
+    },
+    allergens: ['gluten', 'pescado', 'mariscos', 'sulfitos'],
+  },
+  {
+    id: 'fm-vegetariana',
+    name: { es: 'Opción vegetariana', eu: 'Aukera begetarianoa' },
+    image: '/images/dishes/fm-vegetariana.jpg',
+    desc: {
+      es: 'La opción vegetariana cambia cada semana según producto de temporada.',
+      eu: 'Aukera begetarianoa astero aldatzen da denboraldiko produktuaren arabera.',
+    },
+    preparation: {
+      es: 'Cambia cada semana según mercado: risotto de calabaza con queso curado, lasaña de berenjena y queso de cabra, curry de garbanzos con arroz basmati, o salteado de verduras de temporada con tofu marinado. Pregunta al equipo qué hay esta semana.',
+      eu: 'Astero aldatzen da merkatuaren arabera: kalabaza risottoa gazta zaharrarekin, alberjinia eta ahuntz-gazta lasaña, garbantzu curry-a basmati arrozarekin, edo denboraldiko barazki saltsatua tofu marinatuekin. Galdetu langileari aste honetan zer dagoen.',
+    },
+  },
+];
+
+const dessert: FridayDish[] = [
+  {
+    id: 'fm-tarta-queso',
+    name: { es: 'Tarta de queso al horno', eu: 'Labean egindako gazta-tarta' },
+    image: '/images/dishes/fm-tarta-queso.jpg',
+    preparation: {
+      es: 'Tarta de queso estilo San Sebastián, con queso crema, nata, huevos y un toque de queso azul. Horneada a alta temperatura para conseguir la corteza tostada característica y el centro cremoso.',
+      eu: 'Donostia erako gazta tarta, gazta krema, esnegain, arrautza eta gazta urdin ukitu batekin. Tenperatura altuan labean egina, azal txigortu berezia eta erdialde kremosoa lortzeko.',
+    },
+    allergens: ['lacteos', 'huevo', 'gluten'],
+  },
+  {
+    id: 'fm-torrija',
+    name: { es: 'Torrija con helado', eu: 'Torrija izozkiarekin' },
+    image: '/images/dishes/fm-torrija.jpg',
+    preparation: {
+      es: 'Pan brioche empapado en leche infusionada con canela y piel de limón, rebozado en huevo y caramelizado en sartén con azúcar y mantequilla. Servida caliente con una bola de helado de vainilla.',
+      eu: 'Brioche ogia kanelaz eta limoi-azalez infusionatutako esnetan bustia, arrautzan irabazia eta zartaginean azukre eta gurinarekin karamelatua. Bero zerbitzatzen da, banilla izozki bola batekin.',
+    },
+    allergens: ['gluten', 'lacteos', 'huevo'],
+  },
+  {
+    id: 'fm-natillas',
+    name: { es: 'Natillas con caramelo', eu: 'Natillak karameluarekin' },
+    image: '/images/dishes/fm-natillas.jpg',
+    preparation: {
+      es: 'Natillas caseras elaboradas con leche entera, yema de huevo, azúcar, vainilla en rama y un toque de canela. Cocción suave al baño maría hasta espesar sin que hierva. Coronadas con caramelo líquido hecho en sartén y una galleta María.',
+      eu: 'Etxeko natillak, esne osoa, arrautza-gorringo, azukre, banilla makila eta kanela ukitu batekin. Maria bainuan poliki egoste leuna, lodi geratu arte, irakitan jarri gabe. Zartaginean egindako karamelu likidoarekin eta María gaileta batekin koroatzen dira.',
+    },
+    allergens: ['lacteos', 'huevo', 'gluten'],
+  },
+  {
+    id: 'fm-yogurt',
+    name: {
+      es: 'Yogurt con mermelada de fresa',
+      eu: 'Jogurta marrubi marmeladarekin',
+    },
+    image: '/images/dishes/fm-yogurt.jpg',
+    preparation: {
+      es: 'Yogur natural griego cremoso, sin azúcar añadido, servido frío con mermelada casera de fresa elaborada con fresón de temporada cocido lentamente con su propio jugo y un toque de zumo de limón.',
+      eu: 'Greziar jogurt natural kremosoa, azukrerik gehitu gabe, hotz zerbitzatzen da, denboraldiko marrubiekin eginiko etxeko marmeladarekin, bere zukuarekin poliki egosita eta limoi-zuku ukitu batekin.',
+    },
+    allergens: ['lacteos'],
+  },
+];
+
+const drink: FridayDish[] = [
+  {
+    id: 'fm-copa',
+    name: {
+      es: 'Copa de crianza, verdejo o txakoli',
+      eu: 'Crianza, verdejo edo txakolin kopa',
+    },
+  },
+  {
+    id: 'fm-tinto-blanco',
+    name: { es: 'Tinto, blanco o rosado', eu: 'Beltza, zuria edo arrosa' },
+  },
+  {
+    id: 'fm-agua-pan',
+    name: { es: 'Agua y pan incluidos', eu: 'Ura eta ogia barne' },
+  },
+];
+
+export const fridayMenu = {
+  price: '16,50 €',
+  starter,
+  main,
+  dessert,
+  drink,
+} as const;
+
+/** Devuelve todos los platos del menú del viernes en un único array. */
+export function getFridayDishes(): FridayDish[] {
+  return [...starter, ...main, ...dessert, ...drink];
+}

@@ -1,0 +1,25 @@
+---
+import Base from '@layouts/Base.astro';
+import LegalPage from '@components/LegalPage.astro';
+import { useTranslations } from '@i18n/index';
+import { privacidad, legalLastUpdate } from '@content/legal';
+
+const lang = 'es' as const;
+const t = useTranslations(lang);
+const data = privacidad.es;
+---
+
+<Base
+  lang={lang}
+  currentPath="/privacidad"
+  pageTitle={data.title}
+  pageDescription="Política de privacidad de Erreka Meet Point. Cómo tratamos tus datos personales conforme al RGPD."
+>
+  <LegalPage
+    label={t('legal.label.info')}
+    title={data.title}
+    sections={data.sections}
+    lastUpdate={legalLastUpdate}
+    lastUpdateLabel={t('legal.last_update')}
+  />
+</Base>

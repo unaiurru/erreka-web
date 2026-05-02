@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /
+
+# Bots agresivos / scrapers de IA — desactivar si el cliente no quiere
+# que su contenido alimente modelos de IA. Quitar líneas que no apliquen.
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: PerplexityBot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: Amazonbot
+Disallow: /
+
+Sitemap: https://erreka-meet-point.example/sitemap.xml

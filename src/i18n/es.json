@@ -1,0 +1,192 @@
+{
+  "site": {
+    "title": "Erreka Meet Point — Food & Drink desde 2021",
+    "description": "Erreka Meet Point. Bar y restaurante en Mungia (Bizkaia). Burgers, picoteo y menú del día. Reserva tu mesa.",
+    "tagline": "Food & Drink desde 2021"
+  },
+  "nav": {
+    "home": "Inicio",
+    "menu": "Carta",
+    "about": "Quiénes somos",
+    "reserve": "Reservar",
+    "contact": "Contacto"
+  },
+  "home": {
+    "hero": {
+      "since": "Food & Drink · desde 2021",
+      "tagline": "Burgers, picoteo y buen rollo en el corazón del barrio. Cocina de verdad para juntarse, quedarse y volver.",
+      "cta_reserve": "Reservar mesa",
+      "cta_menu": "Ver carta"
+    },
+    "about": {
+      "label": "El sitio",
+      "title_line1": "Un punto de",
+      "title_line2": "encuentro.",
+      "p1": "Erreka Meet Point nació en 2021 con una idea simple: un sitio donde quedar, picotear, comer una buena burger y sentirse en casa. Sin postureo, sin complicaciones.",
+      "p2": "Cocina cuidada con producto de aquí y guiños de fuera. Carrilleras al vino tinto, gyozas de langostino, ensaladas templadas y una de las mejores cartas de hamburguesas de la zona. Todo recién hecho, todo para compartir.",
+      "p3": "Ven a tomar algo en la barra o quédate a comer. Reservar es fácil."
+    },
+    "friday": {
+      "label": "Solo los viernes",
+      "title_line1": "Menú",
+      "title_line2": "del día",
+      "price_note": "iva incluido · entrada + principal + postre + bebida",
+      "starter": "Entrada",
+      "main": "Principal",
+      "dessert": "Postre",
+      "drink": "Bebida"
+    },
+    "highlights": {
+      "label": "Recomendados",
+      "title": "Lo más pedido.",
+      "see_full_menu": "Ver carta completa"
+    }
+  },
+  "menu_page": {
+    "label": "La carta",
+    "title_line1": "Para picar,",
+    "title_line2": "comer y compartir.",
+    "intro": "Cocina recién hecha, producto de cerca, raciones para compartir. Echa un vistazo y reserva mesa cuando lo tengas claro.",
+    "click_hint": "Pulsa el nombre de un plato para ver foto, preparación y alérgenos",
+    "tabs": {
+      "starters": "Entrantes",
+      "burgers": "Burgers",
+      "novelties": "Novedades",
+      "desserts": "Postres"
+    },
+    "burgers_note": "Todas nuestras burgers vienen con patatas caseras. Añádele pulled pork por 3 €. Pan sin gluten +1 €. Ingredientes desde 0,5 €.",
+    "novelties_note": "Unidades limitadas. Si te falla algo, pregúntanos.",
+    "recommended_aria": "Recomendado"
+  },
+  "reserve_page": {
+    "label": "Reservar mesa",
+    "title": "Asegura tu sitio.",
+    "intro": "Reserva online en segundos. Para grupos de más de 8 personas, mejor llámanos al",
+    "phone": "659 81 31 52",
+    "widget_note": "Demo · Aquí va el widget de TheFork",
+    "form": {
+      "people": "Personas",
+      "people_unit": "personas",
+      "date": "Fecha",
+      "time": "Hora",
+      "submit": "Continuar reserva"
+    },
+    "policy": {
+      "title": "Política de reservas",
+      "items": [
+        "Mantenemos tu mesa durante 15 minutos a partir de la hora reservada.",
+        "Para cancelar o modificar, avísanos por WhatsApp con al menos 2 horas de antelación.",
+        "En caso de presentarse más personas de las indicadas en la reserva sin previo aviso, no podremos asegurar la disponibilidad de la misma.",
+        "Para reservas de más de 8 personas, contáctanos directamente por teléfono."
+      ]
+    }
+  },
+  "contact_page": {
+    "label": "Visítanos",
+    "title": "Pásate cuando quieras.",
+    "where": "Dónde",
+    "address_line1": "Usandizaga Eresgille Kalea, 13 — bajo",
+    "address_line2": "48100 Mungia · Bizkaia",
+    "contact": "Contacto",
+    "whatsapp": "WhatsApp directo",
+    "hours": "Horarios",
+    "days": {
+      "mon": "Lunes",
+      "tue": "Martes",
+      "wed": "Miércoles",
+      "thu": "Jueves",
+      "fri": "Viernes",
+      "sat": "Sábado",
+      "sun": "Domingo"
+    },
+    "closed": "Cerrado",
+    "social": "Síguenos"
+  },
+  "footer": {
+    "tag": "Food & Drink desde 2021",
+    "rights": "© 2026 Erreka Meet Point · Todos los derechos reservados",
+    "demo_notice": "DEMO · Web de muestra · No es la web oficial del restaurante",
+    "legal_nav": "Información legal",
+    "aviso_legal": "Aviso legal",
+    "privacidad": "Privacidad",
+    "cookies": "Cookies",
+    "config_cookies": "Configurar cookies"
+  },
+  "legal": {
+    "label": { "info": "Información legal" },
+    "last_update": "Última actualización",
+    "cookies": {
+      "reopen": "Configurar mis cookies"
+    }
+  },
+  "cookies": {
+    "banner": {
+      "title": "Tu privacidad",
+      "text": "Usamos cookies técnicas necesarias para el funcionamiento del sitio. Puedes aceptar o rechazar el resto, o configurar tu elección. Más información en",
+      "link_cookies": "Política de cookies",
+      "link_privacy": "Privacidad",
+      "btn_accept": "Aceptar todas",
+      "btn_reject": "Rechazar todas",
+      "btn_config": "Configurar"
+    },
+    "panel": {
+      "title": "Preferencias de cookies",
+      "intro": "Elige qué tipos de cookies quieres permitir. Las técnicas son siempre necesarias para que la web funcione.",
+      "btn_save": "Guardar selección"
+    },
+    "cats": {
+      "necessary": {
+        "name": "Necesarias",
+        "desc": "Imprescindibles para el funcionamiento básico de la web. No se pueden desactivar."
+      },
+      "maps": {
+        "name": "Mapa (Google Maps)",
+        "desc": "Permite cargar el mapa de Google en la página de contacto. Si no aceptas, verás un placeholder con la dirección."
+      },
+      "analytics": {
+        "name": "Analítica",
+        "desc": "Métricas anónimas de uso para mejorar la web. Actualmente no se carga ninguna herramienta analítica."
+      },
+      "marketing": {
+        "name": "Marketing",
+        "desc": "Cookies para personalizar publicidad. Actualmente no se carga ninguna herramienta de marketing."
+      }
+    },
+    "reopen_aria": "Configurar cookies"
+  },
+  "map": {
+    "placeholder_title": "Mapa de Google",
+    "placeholder_text": "Para mostrar el mapa cargamos contenido de Google Maps, que puede instalar cookies y enviar tu IP a Google. Necesitamos tu permiso.",
+    "btn_load": "Cargar mapa",
+    "btn_open_external": "Abrir en Google Maps"
+  },
+  "about_page": {
+    "label": "Quiénes somos",
+    "title_line1": "Una historia",
+    "title_line2": "de barrio.",
+    "intro": "Erreka Meet Point nació con una idea sencilla: que cada visita merezca el desplazamiento.",
+    "section1_title": "El origen",
+    "section1_p1": "Abrimos las puertas en 2021, en plena calle Usandizaga, con la intención de ofrecer en Mungia un sitio de los que no abundan: cocina cuidada, ambiente relajado y un trato cercano de verdad. Nada de carta interminable ni postureo. Lo que comemos en casa cuando alguien nos importa, hecho bien y servido con calma.",
+    "section1_p2": "Empezamos siendo cuatro mesas y una barra. Hoy seguimos siendo eso, solo que con más historias detrás.",
+    "section2_title": "Nuestra cocina",
+    "section2_p1": "Trabajamos con producto de proximidad siempre que es posible. Carne de vaca madurada de aquí, verduras de temporada, pescado fresco y un pan que da gusto mojar. La carta es corta porque preferimos hacer pocas cosas y hacerlas bien que tener treinta opciones mediocres.",
+    "section2_p2": "Las hamburguesas son nuestra seña, pero no nos quedamos ahí: gyozas de langostino, carrilleras al vino tinto, ensaladas templadas y novedades que vamos rotando para no aburrirnos ni aburrir a nadie.",
+    "section3_title": "El equipo",
+    "section3_p1": "Detrás de Erreka hay un equipo pequeño que hace de todo: cocinar, atender, limpiar y reírse. Si vienes a menudo, acabas conociéndonos por el nombre. Si es tu primera vez, intentamos que la segunda no se haga esperar.",
+    "values_title": "Lo que nos importa",
+    "values": [
+      { "title": "Producto", "desc": "De cerca cuando se puede, de calidad siempre." },
+      { "title": "Calma", "desc": "Aquí se viene a comer, no a correr." },
+      { "title": "Verdad", "desc": "La cuenta sin sorpresas y la cocina sin trampas." },
+      { "title": "Cercanía", "desc": "Si tienes una alergia, una duda o un antojo: pregunta." }
+    ],
+    "cta_title": "¿Te animas a venir?",
+    "cta_desc": "Reserva tu mesa o pásate sin avisar. Las dos opciones nos parecen bien.",
+    "cta_reserve": "Reservar mesa",
+    "cta_menu": "Ver carta"
+  },
+  "lang_switcher": {
+    "es_label": "Castellano",
+    "eu_label": "Euskara"
+  }
+}

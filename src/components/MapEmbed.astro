@@ -1,0 +1,190 @@
+---
+/**
+ * MapEmbed — iframe de Google Maps con consentimiento previo.
+ *
+ * Por defecto muestra un placeholder con botón "Cargar mapa" + opción rápida
+ * "Aceptar siempre". Solo carga el iframe real si el usuario tiene la categoría
+ * `maps` activada en el consentimiento de cookies.
+ *
+ * Escucha el evento global `cookie-consent:change` (ver CookieConsent.astro).
+ */
+
+import { useTranslations, type Lang } from '@i18n/index';
+import { restaurant } from '@content/restaurant';
+
+interface Props {
+  lang: Lang;
+  /** Etiqueta accesible / title del iframe */
+  title: string;
+}
+
+const { lang, title } = Astro.props;
+const t = useTranslations(lang);
+
+const mapQuery = encodeURIComponent(
+  `Erreka Meet Point, ${restaurant.address.street}, ${restaurant.address.postalCode} ${restaurant.address.city}, ${restaurant.address.province}`
+);
+const mapSrc = `https://www.google.com/maps?q=${mapQuery}&output=embed`;
+---
+
+<div class="map-embed" data-map-embed data-map-src={mapSrc} data-map-title={title}>
+  <!-- Placeholder mostrado mientras no hay consentimiento -->
+  <div class="map-placeholder" data-map-placeholder>
+    <div class="map-placeholder-inner">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+        <circle cx="12" cy="10" r="3"/>
+      </svg>
+      <h3>{t('map.placeholder_title')}</h3>
+      <p>{t('map.placeholder_text')}</p>
+      <div class="map-placeholder-actions">
+        <button type="button" class="btn btn-primary" data-map-action="load">
+          {t('map.btn_load')}
+        </button>
+        <a
+          class="map-placeholder-fallback"
+          href={`https://www.google.com/maps?q=${mapQuery}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t('map.btn_open_external')}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .map-embed {
+    width: 100%;
+    height: 100%;
+    min-height: 480px;
+    position: relative;
+  }
+  .map-placeholder {
+    width: 100%;
+    height: 100%;
+    min-height: 480px;
+    background: linear-gradient(135deg, #2a241e 0%, #1a1612 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .map-placeholder-inner {
+    text-align: center;
+    max-width: 360px;
+    color: var(--cream-soft);
+  }
+  .map-placeholder-inner svg {
+    color: var(--copper);
+    margin-bottom: 1rem;
+    opacity: 0.8;
+  }
+  .map-placeholder-inner h3 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    letter-spacing: 0.12em;
+    color: var(--copper);
+    margin-bottom: 0.75rem;
+  }
+  .map-placeholder-inner p {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    font-weight: 300;
+    color: var(--cream-mute);
+    margin-bottom: 1.5rem;
+  }
+  .map-placeholder-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  .map-placeholder-actions .btn {
+    padding: 0.7rem 1.5rem;
+    font-size: 0.75rem;
+  }
+  .map-placeholder-fallback {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cream-mute);
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 2px;
+    transition: color var(--transition-fast);
+  }
+  .map-placeholder-fallback:hover {
+    color: var(--cream);
+  }
+
+  /* :global() porque el iframe se inyecta por JS y no recibe el data-astro-*
+     que aplica el scoping de Astro. */
+  .map-embed :global(iframe) {
+    width: 100%;
+    height: 100%;
+    min-height: 480px;
+    border: 0;
+    display: block;
+  }
+
+  @media (max-width: 900px) {
+    .map-embed,
+    .map-placeholder { min-height: 360px; }
+    .map-embed :global(iframe) { min-height: 360px; }
+  }
+</style>
+
+<script>
+  type ConsentDetail = { necessary: boolean; maps: boolean; analytics: boolean; marketing: boolean };
+
+  function loadMap(container: HTMLElement) {
+    if (container.dataset.mapLoaded === '1') return;
+    const src = container.dataset.mapSrc!;
+    const title = container.dataset.mapTitle!;
+    const iframe = document.createElement('iframe');
+    iframe.src = src;
+    iframe.title = title;
+    iframe.loading = 'lazy';
+    iframe.referrerPolicy = 'no-referrer-when-downgrade';
+    // Estilos inline: el iframe se crea dinámicamente y no recibe el atributo
+    // data-astro-* que necesita para que los estilos CSS scoped se apliquen.
+    iframe.style.width = '100%';
+    iframe.style.height = '100%';
+    iframe.style.minHeight = '480px';
+    iframe.style.border = '0';
+    iframe.style.display = 'block';
+    container.querySelector('[data-map-placeholder]')?.remove();
+    container.appendChild(iframe);
+    container.dataset.mapLoaded = '1';
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-map-embed]').forEach(container => {
+    // Carga manual: botón del placeholder
+    container.querySelector<HTMLButtonElement>('[data-map-action="load"]')?.addEventListener('click', () => {
+      // Si el usuario pulsa "Cargar mapa", aceptamos solo la categoría maps
+      const cc = (window as any).errekaCookieConsent;
+      if (cc && typeof cc.write === 'function') {
+        cc.write({ maps: true, analytics: false, marketing: false });
+      }
+      loadMap(container);
+    });
+
+    // Carga automática si ya había consentimiento previo
+    window.addEventListener('cookie-consent:change', (e: Event) => {
+      const detail = (e as CustomEvent<ConsentDetail>).detail;
+      if (detail?.maps) loadMap(container);
+    });
+
+    // Comprobar estado al cargar
+    try {
+      const raw = localStorage.getItem('erreka_cookie_consent');
+      if (raw) {
+        const c = JSON.parse(raw) as ConsentDetail;
+        if (c.maps) loadMap(container);
+      }
+    } catch { /* noop */ }
+  });
+</script>

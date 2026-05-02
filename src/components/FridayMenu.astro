@@ -1,0 +1,222 @@
+---
+import { useTranslations, type Lang } from '@i18n/index';
+import { fridayMenu, type FridayDish } from '@content/friday-menu';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Un plato es interactivo (clickable) si tiene foto o preparación detallada
+function isInteractive(dish: FridayDish): boolean {
+  return !!dish.image || !!dish.preparation;
+}
+---
+
+<section class="friday-section">
+  <div class="friday">
+    <div class="friday-grid">
+      <div class="friday-header">
+        <div class="section-label" style="color: var(--copper-bright);">
+          {t('home.friday.label')}
+        </div>
+        <h3>
+          {t('home.friday.title_line1')}<br>
+          <span>{t('home.friday.title_line2')}</span>
+        </h3>
+        <div class="friday-price">
+          {fridayMenu.price}
+          <small>{t('home.friday.price_note')}</small>
+        </div>
+      </div>
+
+      <div class="friday-courses">
+        <h4>{t('home.friday.starter')}</h4>
+        <ul>
+          {fridayMenu.starter.map(item => (
+            isInteractive(item) ? (
+              <li>
+                <button type="button" class="friday-item friday-item--button" data-open-dish={item.id}>
+                  {item.name[lang]}
+                </button>
+              </li>
+            ) : (
+              <li class="friday-item">{item.name[lang]}</li>
+            )
+          ))}
+        </ul>
+
+        <h4>{t('home.friday.main')}</h4>
+        <ul>
+          {fridayMenu.main.map(item => (
+            isInteractive(item) ? (
+              <li>
+                <button type="button" class="friday-item friday-item--button" data-open-dish={item.id}>
+                  {item.name[lang]}
+                </button>
+              </li>
+            ) : (
+              <li class="friday-item">{item.name[lang]}</li>
+            )
+          ))}
+        </ul>
+
+        <h4>{t('home.friday.dessert')}</h4>
+        <ul>
+          {fridayMenu.dessert.map(item => (
+            isInteractive(item) ? (
+              <li>
+                <button type="button" class="friday-item friday-item--button" data-open-dish={item.id}>
+                  {item.name[lang]}
+                </button>
+              </li>
+            ) : (
+              <li class="friday-item">{item.name[lang]}</li>
+            )
+          ))}
+        </ul>
+
+        <h4>{t('home.friday.drink')}</h4>
+        <ul>
+          {fridayMenu.drink.map(item => (
+            isInteractive(item) ? (
+              <li>
+                <button type="button" class="friday-item friday-item--button" data-open-dish={item.id}>
+                  {item.name[lang]}
+                </button>
+              </li>
+            ) : (
+              <li class="friday-item">{item.name[lang]}</li>
+            )
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .friday-section {
+    padding: 3rem var(--gutter);
+    max-width: var(--container-max);
+    margin: 0 auto;
+  }
+  .friday {
+    background: linear-gradient(135deg, #2a1f15 0%, #1a1410 100%);
+    border-radius: 4px;
+    padding: 4rem 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .friday::before {
+    content: "VIERNES";
+    position: absolute;
+    top: -2rem;
+    right: -2rem;
+    font-family: var(--font-display);
+    font-size: 14rem;
+    color: rgba(200, 116, 58, 0.06);
+    letter-spacing: 0.05em;
+    pointer-events: none;
+  }
+  .friday-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    position: relative;
+    z-index: 1;
+  }
+  .friday-header h3 {
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .friday-header h3 span {
+    color: var(--copper);
+    display: block;
+  }
+  .friday-price {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    color: var(--copper-bright);
+    font-weight: 600;
+    margin: 1.5rem 0 0.5rem;
+    line-height: 1.1;
+  }
+  .friday-price small {
+    font-size: 0.85rem;
+    color: var(--cream-soft);
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    margin-top: 0.5rem;
+  }
+  .friday-courses h4 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    letter-spacing: 0.2em;
+    color: var(--copper);
+    margin: 1.5rem 0 0.5rem;
+  }
+  .friday-courses h4:first-child { margin-top: 0; }
+  .friday-courses ul {
+    list-style: none;
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    color: var(--cream-soft);
+    font-weight: 300;
+  }
+  .friday-courses li {
+    padding: 0.2rem 0;
+  }
+
+  /* Item clickable: igual que el resto pero con subrayado al hover */
+  .friday-item--button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+    position: relative;
+    transition: color var(--transition-fast);
+  }
+  .friday-item--button::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 1px;
+    background: var(--copper);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+  }
+  .friday-item--button:hover {
+    color: var(--copper-bright);
+  }
+  .friday-item--button:hover::after {
+    transform: scaleX(1);
+  }
+  .friday-item--button:focus-visible {
+    outline: none;
+    color: var(--copper-bright);
+  }
+  .friday-item--button:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  @media (max-width: 768px) {
+    .friday { padding: 2.5rem 1.5rem; }
+    .friday-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .friday-header h3 { font-size: 2.5rem; }
+    .friday-price { font-size: 2.25rem; }
+  }
+</style>

@@ -1,0 +1,445 @@
+---
+/**
+ * Banner de consentimiento de cookies — cumple guía AEPD julio 2023:
+ *  · "Aceptar todas" y "Rechazar todas" con prominencia equivalente.
+ *  · "Configurar" para granularidad.
+ *  · Por defecto, sin cookies de terceros instaladas.
+ *  · El consentimiento es revocable desde un botón flotante o desde la página
+ *    de Política de Cookies (escuchamos el evento 'cookie-consent:open').
+ *
+ * Categorías:
+ *  · necessary  — siempre activas (no se pueden desactivar).
+ *  · maps       — Google Maps (solo en página de contacto).
+ *  · analytics  — placeholder para futuro (no se carga nada hoy).
+ *  · marketing  — placeholder para futuro (no se carga nada hoy).
+ *
+ * El consentimiento se publica al resto del sitio mediante:
+ *   · localStorage (clave `erreka_cookie_consent`).
+ *   · CustomEvent global `cookie-consent:change` con detail = {necessary, maps, analytics, marketing}.
+ *
+ * Otros componentes (p.ej. el iframe del mapa) escuchan ese evento para cargar
+ * o no cargar contenido.
+ */
+
+import { useTranslations, type Lang, localizedPath } from '@i18n/index';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Rutas de Política de Cookies / Privacidad por idioma
+const cookiesUrl = lang === 'es' ? '/es/cookies' : '/eu/cookieak';
+const privacyUrl = lang === 'es' ? '/es/privacidad' : '/eu/pribatutasuna';
+---
+
+<!-- Banner -->
+<div
+  id="cc-banner"
+  class="cc-banner"
+  role="dialog"
+  aria-modal="false"
+  aria-labelledby="cc-banner-title"
+  hidden
+>
+  <div class="cc-banner-inner">
+    <h2 id="cc-banner-title" class="cc-title">{t('cookies.banner.title')}</h2>
+    <p class="cc-text">
+      {t('cookies.banner.text')}
+      <a href={cookiesUrl}>{t('cookies.banner.link_cookies')}</a>
+      ·
+      <a href={privacyUrl}>{t('cookies.banner.link_privacy')}</a>
+    </p>
+
+    <div class="cc-actions">
+      <button class="btn btn-secondary cc-btn-config" type="button" data-cc="config">
+        {t('cookies.banner.btn_config')}
+      </button>
+      <button class="btn btn-secondary" type="button" data-cc="reject">
+        {t('cookies.banner.btn_reject')}
+      </button>
+      <button class="btn btn-primary" type="button" data-cc="accept">
+        {t('cookies.banner.btn_accept')}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Panel de configuración -->
+<div
+  id="cc-panel"
+  class="cc-panel"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="cc-panel-title"
+  hidden
+>
+  <div class="cc-panel-inner">
+    <h2 id="cc-panel-title" class="cc-title">{t('cookies.panel.title')}</h2>
+    <p class="cc-text">{t('cookies.panel.intro')}</p>
+
+    <ul class="cc-categories">
+      <li>
+        <label class="cc-cat">
+          <input type="checkbox" checked disabled data-cc-cat="necessary">
+          <div>
+            <strong>{t('cookies.cats.necessary.name')}</strong>
+            <span>{t('cookies.cats.necessary.desc')}</span>
+          </div>
+        </label>
+      </li>
+      <li>
+        <label class="cc-cat">
+          <input type="checkbox" data-cc-cat="maps">
+          <div>
+            <strong>{t('cookies.cats.maps.name')}</strong>
+            <span>{t('cookies.cats.maps.desc')}</span>
+          </div>
+        </label>
+      </li>
+      <li>
+        <label class="cc-cat">
+          <input type="checkbox" data-cc-cat="analytics">
+          <div>
+            <strong>{t('cookies.cats.analytics.name')}</strong>
+            <span>{t('cookies.cats.analytics.desc')}</span>
+          </div>
+        </label>
+      </li>
+      <li>
+        <label class="cc-cat">
+          <input type="checkbox" data-cc-cat="marketing">
+          <div>
+            <strong>{t('cookies.cats.marketing.name')}</strong>
+            <span>{t('cookies.cats.marketing.desc')}</span>
+          </div>
+        </label>
+      </li>
+    </ul>
+
+    <div class="cc-actions">
+      <button class="btn btn-secondary" type="button" data-cc="reject">
+        {t('cookies.banner.btn_reject')}
+      </button>
+      <button class="btn btn-secondary" type="button" data-cc="save">
+        {t('cookies.panel.btn_save')}
+      </button>
+      <button class="btn btn-primary" type="button" data-cc="accept">
+        {t('cookies.banner.btn_accept')}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Botón flotante para reabrir preferencias -->
+<button
+  id="cc-reopen"
+  class="cc-reopen"
+  type="button"
+  aria-label={t('cookies.reopen_aria')}
+  title={t('cookies.reopen_aria')}
+  hidden
+>
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/>
+    <circle cx="9.5" cy="9.5" r="0.7" fill="currentColor"/>
+    <circle cx="15" cy="11" r="0.7" fill="currentColor"/>
+    <circle cx="11" cy="15" r="0.7" fill="currentColor"/>
+    <circle cx="14.5" cy="15.5" r="0.7" fill="currentColor"/>
+  </svg>
+</button>
+
+<style>
+  /* Forzar que [hidden] funcione: como .cc-panel y .cc-reopen tienen
+     display: flex, el user-agent rule [hidden]{display:none} se pisa.
+     Hay que reafirmarlo aquí. */
+  .cc-banner[hidden],
+  .cc-panel[hidden],
+  .cc-reopen[hidden] {
+    display: none !important;
+  }
+
+  /* Banner inferior */
+  .cc-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200; /* por encima del banner DEMO */
+    background: var(--bg-deep);
+    border-top: 1px solid var(--copper);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
+    padding: 1.5rem var(--gutter) calc(1.5rem + 28px);
+    /* el padding extra deja sitio al banner DEMO de 28px aproximadamente */
+  }
+  .cc-banner-inner {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem 2rem;
+    align-items: center;
+  }
+  .cc-title {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    letter-spacing: 0.12em;
+    color: var(--copper);
+    grid-column: 1 / -1;
+  }
+  .cc-text {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    color: var(--cream-soft);
+    font-weight: 300;
+    line-height: 1.55;
+  }
+  .cc-text a {
+    color: var(--copper-bright);
+    border-bottom: 1px solid rgba(224, 138, 69, 0.4);
+  }
+  .cc-text a:hover {
+    border-bottom-color: var(--copper-bright);
+  }
+
+  .cc-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .cc-actions .btn {
+    padding: 0.7rem 1.2rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  /* Panel modal */
+  .cc-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 210;
+    background: rgba(13, 11, 9, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+  .cc-panel-inner {
+    background: var(--bg-card);
+    border: 1px solid var(--line-strong);
+    max-width: 640px;
+    width: 100%;
+    padding: 2rem;
+    border-radius: 4px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .cc-panel .cc-title { margin-bottom: 0.75rem; }
+  .cc-panel .cc-text { margin-bottom: 1.5rem; }
+
+  .cc-categories {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+  .cc-categories li {
+    border-bottom: 1px solid var(--line);
+  }
+  .cc-cat {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem 0;
+    align-items: flex-start;
+    cursor: pointer;
+  }
+  .cc-cat input {
+    width: 18px;
+    height: 18px;
+    margin-top: 4px;
+    accent-color: var(--copper);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .cc-cat input:disabled { cursor: not-allowed; }
+  .cc-cat strong {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cream);
+    margin-bottom: 0.25rem;
+  }
+  .cc-cat span {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    color: var(--cream-soft);
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  /* Botón flotante de reabrir */
+  .cc-reopen {
+    position: fixed;
+    bottom: 84px; /* deja espacio sobre WhatsAppFloat */
+    left: 24px;
+    z-index: 90;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    color: var(--copper);
+    border: 1px solid var(--line-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+  .cc-reopen:hover {
+    color: var(--copper-bright);
+    border-color: var(--copper);
+  }
+
+  @media (max-width: 768px) {
+    .cc-banner-inner {
+      grid-template-columns: 1fr;
+    }
+    .cc-actions {
+      justify-content: stretch;
+    }
+    .cc-actions .btn {
+      flex: 1;
+    }
+    .cc-reopen {
+      bottom: 76px;
+      left: 16px;
+    }
+  }
+</style>
+
+<script>
+  /* ---------------- runtime ---------------- */
+  type Consent = {
+    necessary: true;
+    maps: boolean;
+    analytics: boolean;
+    marketing: boolean;
+    ts: number;        // timestamp de aceptación
+    v: number;         // versión del esquema
+  };
+
+  const STORAGE_KEY = 'erreka_cookie_consent';
+  const SCHEMA_VERSION = 1;
+  const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
+
+  function read(): Consent | null {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as Consent;
+      if (parsed.v !== SCHEMA_VERSION) return null;
+      if (Date.now() - parsed.ts > ONE_YEAR_MS) return null; // re-pedir consentimiento al año
+      return parsed;
+    } catch { return null; }
+  }
+
+  function write(c: Omit<Consent, 'ts' | 'v' | 'necessary'>) {
+    const value: Consent = {
+      necessary: true,
+      maps: !!c.maps,
+      analytics: !!c.analytics,
+      marketing: !!c.marketing,
+      ts: Date.now(),
+      v: SCHEMA_VERSION,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(value));
+    window.dispatchEvent(new CustomEvent('cookie-consent:change', { detail: value }));
+    return value;
+  }
+
+  function clear() {
+    localStorage.removeItem(STORAGE_KEY);
+  }
+
+  const banner = document.getElementById('cc-banner');
+  const panel = document.getElementById('cc-panel');
+  const reopen = document.getElementById('cc-reopen');
+
+  function showBanner() { banner?.removeAttribute('hidden'); }
+  function hideBanner() { banner?.setAttribute('hidden', ''); }
+  function showPanel(consent: Consent | null) {
+    panel?.removeAttribute('hidden');
+    document.body.style.overflow = 'hidden';
+    // Pre-rellenar checkboxes con el estado actual
+    const c = consent ?? { maps: false, analytics: false, marketing: false };
+    panel?.querySelectorAll<HTMLInputElement>('[data-cc-cat]').forEach(input => {
+      const cat = input.dataset.ccCat as keyof typeof c;
+      if (cat !== 'necessary') input.checked = !!(c as any)[cat];
+    });
+  }
+  function hidePanel() {
+    panel?.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+  }
+  function showReopen() { reopen?.removeAttribute('hidden'); }
+
+  function applyConsent(c: Consent) {
+    hideBanner();
+    hidePanel();
+    showReopen();
+  }
+
+  // Estado inicial
+  const stored = read();
+  if (stored) {
+    applyConsent(stored);
+    // Re-emitir el estado para que componentes que se monten después lo conozcan
+    window.dispatchEvent(new CustomEvent('cookie-consent:change', { detail: stored }));
+  } else {
+    showBanner();
+  }
+
+  // Acciones
+  document.querySelectorAll<HTMLButtonElement>('[data-cc]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.cc;
+      switch (action) {
+        case 'accept': {
+          const v = write({ maps: true, analytics: true, marketing: true });
+          applyConsent(v);
+          break;
+        }
+        case 'reject': {
+          const v = write({ maps: false, analytics: false, marketing: false });
+          applyConsent(v);
+          break;
+        }
+        case 'config': {
+          showPanel(read());
+          break;
+        }
+        case 'save': {
+          const get = (cat: string) =>
+            (panel?.querySelector<HTMLInputElement>(`[data-cc-cat="${cat}"]`)?.checked) ?? false;
+          const v = write({
+            maps: get('maps'),
+            analytics: get('analytics'),
+            marketing: get('marketing'),
+          });
+          applyConsent(v);
+          break;
+        }
+      }
+    });
+  });
+
+  // Reabrir preferencias (botón flotante o desde la página de cookies)
+  reopen?.addEventListener('click', () => showPanel(read()));
+  window.addEventListener('cookie-consent:open', () => showPanel(read()));
+
+  // Helper público en window para depuración / botón "borrar consentimiento"
+  (window as any).errekaCookieConsent = { read, clear, write };
+</script>

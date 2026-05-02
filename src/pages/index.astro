@@ -1,0 +1,26 @@
+---
+// Redirección a /es por defecto (Astro maneja la detección de idioma del navegador automáticamente
+// con prefixDefaultLocale=true, pero ponemos un meta refresh por si acaso).
+---
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="0; url=/es/">
+  <link rel="canonical" href="/es/">
+  <title>Erreka Meet Point</title>
+</head>
+<body>
+  <script>
+    // Detectar idioma del navegador y redirigir
+    const lang = (navigator.language || 'es').toLowerCase();
+    if (lang.startsWith('eu')) {
+      window.location.replace('/eu/');
+    } else {
+      window.location.replace('/es/');
+    }
+  </script>
+  <p>Redirecting… <a href="/es/">Castellano</a> · <a href="/eu/">Euskara</a></p>
+</body>
+</html>

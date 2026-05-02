@@ -1,0 +1,57 @@
+---
+import Base from '@layouts/Base.astro';
+import LegalPage from '@components/LegalPage.astro';
+import { useTranslations } from '@i18n/index';
+import { cookies, cookieList, legalLastUpdate } from '@content/legal';
+
+const lang = 'es' as const;
+const t = useTranslations(lang);
+const data = cookies.es;
+---
+
+<Base
+  lang={lang}
+  currentPath="/cookies"
+  pageTitle={data.title}
+  pageDescription="Política de cookies de Erreka Meet Point. Qué cookies usamos y cómo gestionarlas."
+>
+  <LegalPage
+    label={t('legal.label.info')}
+    title={data.title}
+    sections={data.sections}
+    lastUpdate={legalLastUpdate}
+    lastUpdateLabel={t('legal.last_update')}
+  >
+    <table class="cookie-table">
+      <caption>{data.table.caption}</caption>
+      <thead>
+        <tr>
+          {data.table.headers.map(h => <th>{h}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {cookieList.map(c => (
+          <tr>
+            <td><code>{c.name}</code></td>
+            <td>{c.provider}</td>
+            <td>{c.purpose.es}</td>
+            <td>{c.duration.es}</td>
+            <td>{data.table.typeLabels[c.type] ?? c.type}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    <p style="margin-top:2.5rem;">
+      <button class="btn btn-secondary" id="reopenCookies" type="button">
+        {t('legal.cookies.reopen')}
+      </button>
+    </p>
+  </LegalPage>
+</Base>
+
+<script>
+  document.getElementById('reopenCookies')?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('cookie-consent:open'));
+  });
+</script>

@@ -1,0 +1,101 @@
+---
+import { useTranslations, type Lang } from '@i18n/index';
+import Nav from '@components/Nav.astro';
+import Footer from '@components/Footer.astro';
+import WhatsAppFloat from '@components/WhatsAppFloat.astro';
+import CookieConsent from '@components/CookieConsent.astro';
+import '@/styles/tokens.css';
+
+interface Props {
+  lang: Lang;
+  /** Path canónico SIN prefijo de idioma. Ej: '/' '/carta' '/reservas' '/contacto' */
+  currentPath: string;
+  /** Título específico de la página (se concatena con el nombre del restaurante) */
+  pageTitle?: string;
+  /** Descripción específica de la página */
+  pageDescription?: string;
+}
+
+const { lang, currentPath, pageTitle, pageDescription } = Astro.props;
+const t = useTranslations(lang);
+
+const fullTitle = pageTitle
+  ? `${pageTitle} · Erreka Meet Point`
+  : t('site.title');
+const description = pageDescription ?? t('site.description');
+
+// hreflang: tienen que ser URLs absolutas o Lighthouse / Search Console
+// las marca como inválidas. Astro.site viene de astro.config.mjs (`site`).
+// Si por lo que sea no estuviera configurado, caemos a localhost en dev.
+const siteOrigin = Astro.site?.toString().replace(/\/$/, '') ?? '';
+const tail = currentPath === '/' ? '' : currentPath;
+const urlEs = `${siteOrigin}/es${tail}`;
+const urlEu = `${siteOrigin}/eu${tail}`;
+const canonical = lang === 'es' ? urlEs : urlEu;
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{fullTitle}</title>
+  <meta name="description" content={description}>
+  <meta name="generator" content={Astro.generator}>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content={fullTitle}>
+  <meta property="og:description" content={description}>
+  <meta property="og:type" content="restaurant.restaurant">
+  <meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'eu_ES'}>
+
+  <!-- Tipografías: carga asíncrona para no bloquear el render.
+       Truco: media="print" hace que el navegador no bloquee el render
+       esperando el CSS. Cuando carga, onload cambia media a "all" y se aplica.
+       Fallback con <noscript> para usuarios sin JS. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    rel="preload"
+    as="style"
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@300;400;500;600&display=swap"
+  >
+  <link
+    href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+    media="print"
+    onload="this.media='all'"
+  >
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    >
+  </noscript>
+
+  <link rel="canonical" href={canonical}>
+  <link rel="alternate" hreflang="es" href={urlEs}>
+  <link rel="alternate" hreflang="eu" href={urlEu}>
+  <link rel="alternate" hreflang="x-default" href={urlEs}>
+</head>
+<body>
+  <Nav lang={lang} currentPath={currentPath} />
+
+  <main>
+    <slot />
+  </main>
+
+  <Footer lang={lang} />
+  <WhatsAppFloat />
+  <CookieConsent lang={lang} />
+
+  <div class="demo-banner">{t('footer.demo_notice')}</div>
+
+  <style is:global>
+    main {
+      padding-top: var(--nav-height);
+      min-height: calc(100vh - var(--nav-height));
+    }
+  </style>
+</body>
+</html>

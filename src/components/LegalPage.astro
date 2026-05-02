@@ -1,0 +1,139 @@
+---
+/**
+ * Componente reutilizable para páginas legales (Aviso Legal, Privacidad, Cookies).
+ * Mantiene el estilo del resto de la web: sobre fondo oscuro, tipografía serif,
+ * acentos cobre. Sin formularios, sin trackers.
+ */
+
+interface Section {
+  h: string;
+  p: readonly string[];
+}
+
+interface Props {
+  label: string;        // p.ej. "Información legal"
+  title: string;        // p.ej. "Aviso Legal"
+  intro?: string;       // texto introductorio opcional
+  sections: readonly Section[];
+  lastUpdate: string;   // YYYY-MM-DD
+  lastUpdateLabel: string; // p.ej. "Última actualización"
+}
+
+const { label, title, intro, sections, lastUpdate, lastUpdateLabel } = Astro.props;
+---
+
+<section class="legal container-narrow">
+  <div class="section-label">{label}</div>
+  <h1 class="section-title">{title}</h1>
+
+  {intro && <p class="legal-intro">{intro}</p>}
+
+  <div class="legal-meta">
+    <span>{lastUpdateLabel}: <time datetime={lastUpdate}>{lastUpdate}</time></span>
+  </div>
+
+  <article class="legal-body">
+    {sections.map(s => (
+      <section>
+        <h2>{s.h}</h2>
+        {s.p.map(text => <p set:html={text} />)}
+      </section>
+    ))}
+
+    <slot />
+  </article>
+</section>
+
+<style>
+  .legal {
+    padding: 5rem var(--gutter) 6rem;
+  }
+  .legal-intro {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--cream-soft);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+  }
+  .legal-meta {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cream-mute);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 0.85rem 0;
+    margin-bottom: 3rem;
+  }
+
+  .legal-body section {
+    margin-bottom: 2.5rem;
+  }
+  .legal-body h2 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    letter-spacing: 0.12em;
+    color: var(--copper);
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+  .legal-body :global(p) {
+    font-family: var(--font-serif);
+    font-size: 1.02rem;
+    line-height: 1.8;
+    color: var(--cream-soft);
+    font-weight: 300;
+    margin-bottom: 0.85rem;
+  }
+  .legal-body :global(strong) {
+    color: var(--cream);
+    font-weight: 500;
+  }
+  .legal-body :global(a) {
+    color: var(--copper-bright);
+    border-bottom: 1px solid rgba(224, 138, 69, 0.4);
+    transition: border-color var(--transition-fast);
+  }
+  .legal-body :global(a:hover) {
+    border-bottom-color: var(--copper-bright);
+  }
+
+  /* Tabla de cookies (slot) */
+  .legal-body :global(.cookie-table) {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--cream-soft);
+    margin-top: 1rem;
+  }
+  .legal-body :global(.cookie-table caption) {
+    text-align: left;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--copper);
+    padding-bottom: 0.75rem;
+  }
+  .legal-body :global(.cookie-table th),
+  .legal-body :global(.cookie-table td) {
+    padding: 0.7rem 0.85rem;
+    border-bottom: 1px solid var(--line);
+    text-align: left;
+    vertical-align: top;
+  }
+  .legal-body :global(.cookie-table th) {
+    font-weight: 500;
+    color: var(--cream);
+    background: var(--bg-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.7rem;
+  }
+  .legal-body :global(.cookie-table tbody tr:hover) {
+    background: rgba(244, 234, 216, 0.02);
+  }
+</style>

@@ -1,0 +1,193 @@
+{
+  "_NOTE": "ARCHIVO DE TRADUCCIONES EN EUSKERA — Pendiente de revisión por hablante nativo. Mantener exactamente la misma estructura de claves que es.json.",
+  "site": {
+    "title": "Erreka Meet Point — Food & Drink 2021etik",
+    "description": "Erreka Meet Point. Taberna eta jatetxea Mungian (Bizkaia). Burgerrak, pintxoak eta eguneko menua. Erreserba ezazu zure mahaia.",
+    "tagline": "Food & Drink 2021etik"
+  },
+  "nav": {
+    "home": "Hasiera",
+    "menu": "Karta",
+    "about": "Gu nor garen",
+    "reserve": "Erreserbatu",
+    "contact": "Kontaktua"
+  },
+  "home": {
+    "hero": {
+      "since": "Food & Drink · 2021etik",
+      "tagline": "Burgerrak, pintxoak eta giro ona auzoaren bihotzean. Benetako sukaldaritza, biltzeko, gelditzeko eta itzultzeko.",
+      "cta_reserve": "Mahaia erreserbatu",
+      "cta_menu": "Karta ikusi"
+    },
+    "about": {
+      "label": "Tokia",
+      "title_line1": "Topagune",
+      "title_line2": "bat.",
+      "p1": "Erreka Meet Point 2021ean sortu zen ideia sinple batekin: geratzeko, pintxotzeko, burger on bat jateko eta etxean bezala sentitzeko tokia. Itxurakeriarik gabe, korapilorik gabe.",
+      "p2": "Sukaldaritza zaindua, hemengo produktuekin eta kanpoko ukituekin. Masailak ardo beltzean, otarrainxken gyozak, entsalada epelak eta inguruko hanburgesa karta onenetako bat. Dena berri-berria, dena partekatzeko.",
+      "p3": "Etorri zerbait hartzera barran edo geratu jatera. Erreserbatzea erraza da."
+    },
+    "friday": {
+      "label": "Ostiraletan bakarrik",
+      "title_line1": "Eguneko",
+      "title_line2": "menua",
+      "price_note": "BEZ barne · sarrera + plater nagusia + postrea + edaria",
+      "starter": "Sarrera",
+      "main": "Plater nagusia",
+      "dessert": "Postrea",
+      "drink": "Edaria"
+    },
+    "highlights": {
+      "label": "Gomendatuak",
+      "title": "Eskatuenak.",
+      "see_full_menu": "Karta osoa ikusi"
+    }
+  },
+  "menu_page": {
+    "label": "Karta",
+    "title_line1": "Pintxotzeko,",
+    "title_line2": "jateko eta partekatzeko.",
+    "intro": "Sukaldaritza berri-berria, hurbileko produktua, partekatzeko errazioak. Begiratu eta erreserbatu mahaia argi duzunean.",
+    "click_hint": "Sakatu plater baten izena argazkia, prestaketa eta alergenoak ikusteko",
+    "tabs": {
+      "starters": "Sarrerak",
+      "burgers": "Burgerrak",
+      "novelties": "Berriak",
+      "desserts": "Postreak"
+    },
+    "burgers_note": "Burger guztiak etxeko patatekin datoz. Gehitu pulled pork 3 €-rekin. Glutenik gabeko ogia +1 €. Osagaiak 0,5 €-tik aurrera.",
+    "novelties_note": "Unitate mugatuak. Zerbait amaitu bada, galdetu gurekin.",
+    "recommended_aria": "Gomendatua"
+  },
+  "reserve_page": {
+    "label": "Mahaia erreserbatu",
+    "title": "Ziurtatu zure tokia.",
+    "intro": "Erreserbatu online segundo gutxitan. 8 lagun baino gehiagoko taldeentzat, hobe deitu",
+    "phone": "659 81 31 52",
+    "widget_note": "Demo · Hemen TheFork-en widgeta doa",
+    "form": {
+      "people": "Lagunak",
+      "people_unit": "lagun",
+      "date": "Data",
+      "time": "Ordua",
+      "submit": "Erreserba jarraitu"
+    },
+    "policy": {
+      "title": "Erreserba politika",
+      "items": [
+        "Zure mahaia 15 minutuz gordetzen dugu erreserbatutako ordutik.",
+        "Bertan behera utzi edo aldatzeko, jakinarazi WhatsApp bidez gutxienez 2 ordu lehenago.",
+        "Erreserban adierazitakoak baino lagun gehiago aurkeztuz gero, ezin izango dugu mahaiaren erabilgarritasuna ziurtatu.",
+        "8 lagun baino gehiagoko erreserbentzat, jarri zuzenean gurekin harremanetan telefonoz."
+      ]
+    }
+  },
+  "contact_page": {
+    "label": "Etorri",
+    "title": "Etorri nahi duzunean.",
+    "where": "Non",
+    "address_line1": "Usandizaga Eresgille Kalea, 13 — beherea",
+    "address_line2": "48100 Mungia · Bizkaia",
+    "contact": "Kontaktua",
+    "whatsapp": "WhatsApp zuzenean",
+    "hours": "Ordutegiak",
+    "days": {
+      "mon": "Astelehena",
+      "tue": "Asteartea",
+      "wed": "Asteazkena",
+      "thu": "Osteguna",
+      "fri": "Ostirala",
+      "sat": "Larunbata",
+      "sun": "Igandea"
+    },
+    "closed": "Itxita",
+    "social": "Jarraitu gaitzazu"
+  },
+  "footer": {
+    "tag": "Food & Drink 2021etik",
+    "rights": "© 2026 Erreka Meet Point · Eskubide guztiak erreserbatuta",
+    "demo_notice": "DEMO · Erakusketa-weba · Ez da jatetxearen webgune ofiziala",
+    "legal_nav": "Lege informazioa",
+    "aviso_legal": "Lege oharra",
+    "privacidad": "Pribatutasuna",
+    "cookies": "Cookieak",
+    "config_cookies": "Cookieak konfiguratu"
+  },
+  "legal": {
+    "label": { "info": "Lege informazioa" },
+    "last_update": "Azken eguneraketa",
+    "cookies": {
+      "reopen": "Nire cookieak konfiguratu"
+    }
+  },
+  "cookies": {
+    "banner": {
+      "title": "Zure pribatutasuna",
+      "text": "Webgunearen funtzionamendurako beharrezko cookie teknikoak erabiltzen ditugu. Gainerakoak onartu, baztertu edo konfigura ditzakezu. Informazio gehiago hemen:",
+      "link_cookies": "Cookien politika",
+      "link_privacy": "Pribatutasuna",
+      "btn_accept": "Onartu denak",
+      "btn_reject": "Baztertu denak",
+      "btn_config": "Konfiguratu"
+    },
+    "panel": {
+      "title": "Cookien hobespenak",
+      "intro": "Aukeratu zer cookie mota baimentzen dituzun. Teknikoak beti dira beharrezkoak webguneak funtziona dezan.",
+      "btn_save": "Aukeraketa gorde"
+    },
+    "cats": {
+      "necessary": {
+        "name": "Beharrezkoak",
+        "desc": "Webgunearen oinarrizko funtzionamendurako ezinbestekoak. Ezin dira desaktibatu."
+      },
+      "maps": {
+        "name": "Mapa (Google Maps)",
+        "desc": "Kontaktu orrian Google-ren mapa kargatzea ahalbidetzen du. Onartzen ez baduzu, helbidearen tokian-tokian erakutsiko da."
+      },
+      "analytics": {
+        "name": "Analitika",
+        "desc": "Erabileraren neurketa anonimoa weba hobetzeko. Une honetan ez da analitika tresnarik kargatzen."
+      },
+      "marketing": {
+        "name": "Marketina",
+        "desc": "Publizitatea pertsonalizatzeko cookieak. Une honetan ez da marketin tresnarik kargatzen."
+      }
+    },
+    "reopen_aria": "Cookieak konfiguratu"
+  },
+  "map": {
+    "placeholder_title": "Google Maps mapa",
+    "placeholder_text": "Mapa erakusteko, Google Maps-eko edukia kargatzen dugu, eta horrek cookieak instala ditzake eta zure IP-a Google-ra bidali. Zure baimena behar dugu.",
+    "btn_load": "Mapa kargatu",
+    "btn_open_external": "Google Maps-en ireki"
+  },
+  "about_page": {
+    "label": "Gu nor garen",
+    "title_line1": "Auzoko",
+    "title_line2": "istorio bat.",
+    "intro": "Erreka Meet Point ideia sinple batekin sortu zen: bisita bakoitzak merezi izan dezala.",
+    "section1_title": "Jatorria",
+    "section1_p1": "2021ean ireki genituen ateak, Usandizaga kalean, Mungian gutxi diren tokietako bat eskaintzeko asmoz: sukaldaritza zaindua, giro lasaia eta benetako tratu hurbila. Karta amaigaberik gabe, itxurakeriarik gabe. Etxean garrantzitsua den norbaitek bisitatzen gaituenean jaten duguna, ondo eginda eta lasai zerbitzatuta.",
+    "section1_p2": "Lau mahai eta barra batekin hasi ginen. Gaur egun, hori bera gara, baina istorio gehiagorekin atzean.",
+    "section2_title": "Gure sukaldaritza",
+    "section2_p1": "Hurbileko produktuarekin lan egiten dugu ahal dugun guztietan. Hemengo behi heldua, denboraldiko barazkiak, arrain freskoa eta ogi gozoa. Karta laburra da, gauza gutxi ondo egitea nahiago dugulako, hogeita hamar erdipurdiko aukera baino.",
+    "section2_p2": "Hanburgesak gure ezaugarria dira, baina ez gara horretan geratzen: otarrainxken gyozak, ardo beltzeko masailak, entsalada epelak eta noizean behin txandakatzen ditugun berriak, ez aspertzeko ez aspertzeko.",
+    "section3_title": "Taldea",
+    "section3_p1": "Errekaren atzean talde txiki bat dago, dena egiten duena: kozinatu, atenditu, garbitu eta barre egin. Sarritan etortzen bazara, izenez ezagutuko gaituzu. Lehen aldia bada, bigarrenak ez du askorik itxaron behar.",
+    "values_title": "Inporta zaiguna",
+    "values": [
+      { "title": "Produktua", "desc": "Hurbilekoa ahal denean, kalitatezkoa beti." },
+      { "title": "Lasaitasuna", "desc": "Hemen jatera etortzen da, ez korrika." },
+      { "title": "Egia", "desc": "Kontua ezustekorik gabe eta sukaldea iruzurrik gabe." },
+      { "title": "Hurbiltasuna", "desc": "Alergia, zalantza edo gogo bat baduzu: galdetu." }
+    ],
+    "cta_title": "Animatzen zara etortzera?",
+    "cta_desc": "Erreserbatu zure mahaia edo etorri abisatu gabe. Bi aukerak ondo iruditzen zaizkigu.",
+    "cta_reserve": "Mahaia erreserbatu",
+    "cta_menu": "Karta ikusi"
+  },
+  "lang_switcher": {
+    "es_label": "Castellano",
+    "eu_label": "Euskara"
+  }
+}

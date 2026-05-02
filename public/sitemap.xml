@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sitemap manual. Las URLs deben coincidir con `site` en astro.config.mjs.
+  Si cambias el dominio, actualiza también este archivo.
+
+  Cada <url> incluye sus alternativas hreflang (es/eu/x-default) según
+  recomendación de Google. Las páginas legales también se indexan: si por
+  posicionamiento prefieres ocultarlas, basta con quitarlas de aquí o
+  añadir <meta name="robots" content="noindex"> en sus templates.
+-->
+<urlset
+  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml"
+>
+
+  <!-- Inicio -->
+  <url>
+    <loc>https://erreka-meet-point.example/es/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/" />
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://erreka-meet-point.example/eu/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/" />
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Carta -->
+  <url>
+    <loc>https://erreka-meet-point.example/es/carta</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/carta" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/karta" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/carta" />
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://erreka-meet-point.example/eu/karta</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/carta" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/karta" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/carta" />
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Sobre nosotros -->
+  <url>
+    <loc>https://erreka-meet-point.example/es/sobre-nosotros</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/sobre-nosotros" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/gu-nor-garen" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/sobre-nosotros" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://erreka-meet-point.example/eu/gu-nor-garen</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/sobre-nosotros" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/gu-nor-garen" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/sobre-nosotros" />
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Reservas -->
+  <url>
+    <loc>https://erreka-meet-point.example/es/reservas</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/reservas" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/erreserbak" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/reservas" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://erreka-meet-point.example/eu/erreserbak</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/reservas" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/erreserbak" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/reservas" />
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Contacto -->
+  <url>
+    <loc>https://erreka-meet-point.example/es/contacto</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/contacto" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/kontaktua" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/contacto" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://erreka-meet-point.example/eu/kontaktua</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/contacto" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/kontaktua" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/contacto" />
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Páginas legales -->
+  <url>
+    <loc>https://erreka-meet-point.example/es/aviso-legal</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/aviso-legal" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/lege-oharra" />
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://erreka-meet-point.example/eu/lege-oharra</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/aviso-legal" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/lege-oharra" />
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://erreka-meet-point.example/es/privacidad</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/privacidad" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/pribatutasuna" />
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://erreka-meet-point.example/eu/pribatutasuna</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/privacidad" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/pribatutasuna" />
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://erreka-meet-point.example/es/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/cookies" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/cookieak" />
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://erreka-meet-point.example/eu/cookieak</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/cookies" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/cookieak" />
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>

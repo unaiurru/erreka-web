@@ -1,0 +1,241 @@
+---
+import Base from '@layouts/Base.astro';
+import { useTranslations, useArray, localizedPath } from '@i18n/index';
+
+const lang = 'es' as const;
+const t = useTranslations(lang);
+const arr = useArray(lang);
+
+const values = arr('about_page.values') as unknown as Array<{ title: string; desc: string }>;
+// useArray solo devuelve string[], así que cargamos values directamente del JSON
+import esJson from '@i18n/es.json';
+const valuesData = esJson.about_page.values;
+---
+
+<Base
+  lang={lang}
+  currentPath="/sobre-nosotros"
+  pageTitle="Quiénes somos"
+  pageDescription="La historia de Erreka Meet Point: un sitio de barrio en Mungia, abierto desde 2021."
+>
+
+  <!-- HERO -->
+  <section class="about-hero">
+    <div class="about-hero-bg img-slot" data-slot="HERO · Foto del equipo o vista general del local"></div>
+    <div class="about-hero-content container">
+      <div class="section-label">{t('about_page.label')}</div>
+      <h1 class="section-title big">
+        {t('about_page.title_line1')}<br>
+        <span class="accent">{t('about_page.title_line2')}</span>
+      </h1>
+      <p class="about-intro">{t('about_page.intro')}</p>
+    </div>
+  </section>
+
+  <!-- HISTORIA EN BLOQUES -->
+  <section class="story container">
+
+    <div class="story-block">
+      <div class="story-img img-slot" data-slot="Foto · Local de día / barra"></div>
+      <div class="story-text">
+        <h2>{t('about_page.section1_title')}</h2>
+        <p>{t('about_page.section1_p1')}</p>
+        <p>{t('about_page.section1_p2')}</p>
+      </div>
+    </div>
+
+    <div class="story-block reverse">
+      <div class="story-img img-slot" data-slot="Foto · Plato emblemático / cocina en acción"></div>
+      <div class="story-text">
+        <h2>{t('about_page.section2_title')}</h2>
+        <p>{t('about_page.section2_p1')}</p>
+        <p>{t('about_page.section2_p2')}</p>
+      </div>
+    </div>
+
+    <div class="story-block">
+      <div class="story-img img-slot" data-slot="Foto · Equipo trabajando o atendiendo"></div>
+      <div class="story-text">
+        <h2>{t('about_page.section3_title')}</h2>
+        <p>{t('about_page.section3_p1')}</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- VALORES -->
+  <section class="values-section container">
+    <h2 class="section-title">{t('about_page.values_title')}</h2>
+    <div class="values-grid">
+      {valuesData.map((v, i) => (
+        <div class="value-card">
+          <span class="value-number">0{i + 1}</span>
+          <h3>{v.title}</h3>
+          <p>{v.desc}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="about-cta">
+    <div class="container-narrow">
+      <h2 class="section-title">{t('about_page.cta_title')}</h2>
+      <p class="cta-desc">{t('about_page.cta_desc')}</p>
+      <div class="cta-actions">
+        <a href={localizedPath(lang, '/reservas')} class="btn btn-primary">{t('about_page.cta_reserve')}</a>
+        <a href={localizedPath(lang, '/carta')} class="btn btn-secondary">{t('about_page.cta_menu')}</a>
+      </div>
+    </div>
+  </section>
+
+</Base>
+
+<style>
+  /* Hero */
+  .about-hero {
+    position: relative;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    padding: 6rem 0 4rem;
+  }
+  .about-hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+  .about-hero-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(22, 19, 16, 0.75) 0%, rgba(22, 19, 16, 0.95) 100%);
+  }
+  .about-hero-content { position: relative; z-index: 2; }
+  .section-title.big {
+    font-size: clamp(3rem, 9vw, 6.5rem);
+  }
+  .section-title .accent { color: var(--copper); }
+  .about-intro {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.2rem, 2vw, 1.5rem);
+    color: var(--cream-soft);
+    max-width: 700px;
+    line-height: 1.6;
+    margin-top: 1rem;
+  }
+
+  /* Historia */
+  .story {
+    padding: 5rem var(--gutter);
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+  }
+  .story-block {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .story-block.reverse {
+    direction: rtl;
+  }
+  .story-block.reverse > * {
+    direction: ltr;
+  }
+  .story-img {
+    aspect-ratio: 4/3;
+    border-radius: 2px;
+  }
+  .story-text h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    color: var(--copper);
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.05em;
+  }
+  .story-text p {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--cream-soft);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+    font-weight: 300;
+  }
+
+  /* Valores */
+  .values-section {
+    padding: 5rem var(--gutter);
+    border-top: 1px solid var(--line);
+  }
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+  .value-card {
+    padding: 2rem 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    position: relative;
+    transition: all 0.3s ease;
+  }
+  .value-card:hover {
+    border-color: var(--copper);
+    transform: translateY(-4px);
+  }
+  .value-number {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    color: var(--copper);
+    opacity: 0.4;
+    letter-spacing: 0.1em;
+  }
+  .value-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    letter-spacing: 0.1em;
+    color: var(--cream);
+    margin: 0.5rem 0 0.75rem;
+  }
+  .value-card p {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    color: var(--cream-soft);
+    line-height: 1.6;
+    font-weight: 300;
+    font-style: italic;
+  }
+
+  /* CTA final */
+  .about-cta {
+    padding: 6rem var(--gutter);
+    text-align: center;
+    background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+    border-top: 1px solid var(--line);
+  }
+  .cta-desc {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    color: var(--cream-soft);
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+    font-style: italic;
+  }
+  .cta-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .story { padding: 3rem 1.25rem; gap: 3rem; }
+    .story-block { grid-template-columns: 1fr; gap: 1.5rem; direction: ltr !important; }
+    .values-section, .about-cta { padding: 3rem 1.25rem; }
+  }
+</style>

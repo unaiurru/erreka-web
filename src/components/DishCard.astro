@@ -1,0 +1,132 @@
+---
+import { getDishName, type Dish } from '@content/menu';
+import { useTranslations, type Lang } from '@i18n/index';
+
+interface Props {
+  dish: Dish;
+  lang: Lang;
+}
+
+const { dish, lang } = Astro.props;
+const t = useTranslations(lang);
+const description = dish.desc?.[lang];
+const displayName = getDishName(dish, lang);
+const recommendedLabel = t('menu_page.recommended_aria');
+
+// Es clickable si hay algo más que enseñar (foto o preparación)
+const hasDetails = !!dish.preparation || !!dish.image;
+---
+
+<article class:list={['dish', { 'dish--interactive': hasDetails }]}>
+  <div class="dish-head">
+    {hasDetails ? (
+      <button type="button" class="dish-name dish-name--button" data-open-dish={dish.id}>
+        {displayName}
+        {dish.highlight && <span class="dish-star" aria-label={recommendedLabel}>★</span>}
+      </button>
+    ) : (
+      <span class="dish-name">
+        {displayName}
+        {dish.highlight && <span class="dish-star" aria-label={recommendedLabel}>★</span>}
+      </span>
+    )}
+    <span class="dish-dots"></span>
+    <span class="dish-price">{dish.price}</span>
+  </div>
+  {description && <p class="dish-desc">{description}</p>}
+</article>
+
+<style>
+  .dish {
+    padding: 0.5rem 0;
+  }
+
+  .dish-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .dish-name {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    letter-spacing: 0.05em;
+    color: var(--cream);
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+
+  .dish-name--button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    letter-spacing: inherit;
+    color: var(--cream);
+    transition: color 0.2s ease;
+    position: relative;
+  }
+
+  /* Subrayado sutil que aparece al hover, indicando interactividad */
+  .dish-name--button::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 1px;
+    background: var(--copper);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s ease;
+  }
+  .dish-name--button:hover {
+    color: var(--copper-bright);
+  }
+  .dish-name--button:hover::after {
+    transform: scaleX(1);
+  }
+  .dish-name--button:focus-visible {
+    outline: none;
+    color: var(--copper-bright);
+  }
+  .dish-name--button:focus-visible::after {
+    transform: scaleX(1);
+  }
+
+  .dish-star {
+    color: var(--copper);
+    font-size: 0.7em;
+    transform: translateY(-2px);
+    opacity: 0.85;
+  }
+
+  .dish-dots {
+    flex: 1;
+    border-bottom: 1px dotted rgba(244, 234, 216, 0.25);
+    transform: translateY(-4px);
+    min-width: 20px;
+  }
+
+  .dish-price {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--copper-bright);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .dish-desc {
+    font-family: var(--font-serif);
+    font-size: 0.95rem;
+    color: var(--cream-soft);
+    font-weight: 300;
+    line-height: 1.55;
+    font-style: italic;
+    max-width: 540px;
+  }
+</style>

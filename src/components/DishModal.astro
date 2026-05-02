@@ -1,0 +1,402 @@
+---
+import type { Lang } from '@i18n/index';
+import { starters, burgers, novelties, desserts, getDishName } from '@content/menu';
+import { getFridayDishes } from '@content/friday-menu';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+// Combinamos todos los platos para el script.
+// Incluimos los que tienen preparation O imagen (son los "interactivos").
+// Los platos del friday-menu no tienen "price" propio (forman parte del menú
+// de 16,50 €), así que dejamos price como cadena vacía y el modal lo oculta.
+const cartaDishes = [...starters, ...burgers, ...novelties, ...desserts]
+  .filter(d => d.preparation || d.image)
+  .map(d => ({
+    id: d.id,
+    name: getDishName(d, lang),
+    price: d.price,
+    image: d.image,
+    desc: d.desc?.[lang] ?? '',
+    preparation: d.preparation?.[lang] ?? '',
+    allergens: d.allergens ?? [],
+  }));
+
+const fridayDishes = getFridayDishes()
+  .filter(d => d.preparation || d.image)
+  .map(d => ({
+    id: d.id,
+    name: d.name[lang],
+    price: '',                    // sin precio individual
+    image: d.image,
+    desc: d.desc?.[lang] ?? '',
+    preparation: d.preparation?.[lang] ?? '',
+    allergens: d.allergens ?? [],
+  }));
+
+const allDishes = [...cartaDishes, ...fridayDishes];
+
+const labels = {
+  es: {
+    close: 'Cerrar',
+    preparation: 'Cómo lo preparamos',
+    description: 'Qué lleva',
+    allergens: 'Alérgenos',
+    allergen_names: {
+      gluten: 'Gluten',
+      lacteos: 'Lácteos',
+      huevo: 'Huevo',
+      pescado: 'Pescado',
+      mariscos: 'Mariscos',
+      frutos_secos: 'Frutos secos',
+      soja: 'Soja',
+      sesamo: 'Sésamo',
+      mostaza: 'Mostaza',
+      apio: 'Apio',
+      sulfitos: 'Sulfitos',
+    } as Record<string, string>,
+  },
+  eu: {
+    close: 'Itxi',
+    preparation: 'Nola prestatzen dugu',
+    description: 'Zer du',
+    allergens: 'Alergenoak',
+    allergen_names: {
+      gluten: 'Glutena',
+      lacteos: 'Esnekiak',
+      huevo: 'Arrautza',
+      pescado: 'Arraina',
+      mariscos: 'Itsaskiak',
+      frutos_secos: 'Fruitu lehorrak',
+      soja: 'Soja',
+      sesamo: 'Sesamoa',
+      mostaza: 'Mostaza',
+      apio: 'Apioa',
+      sulfitos: 'Sulfitoak',
+    } as Record<string, string>,
+  },
+};
+
+const L = labels[lang];
+---
+
+<div class="dish-modal" id="dishModal" aria-hidden="true" role="dialog">
+  <div class="dish-modal-backdrop" data-close-modal></div>
+
+  <div class="dish-modal-content" role="document">
+    <button class="dish-modal-close" type="button" data-close-modal aria-label={L.close}>
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+
+    <div class="dish-modal-image">
+      <img id="modalImage" src="" alt="" />
+      <div class="dish-modal-image-fallback" id="modalImageFallback">
+        <span id="modalImageFallbackText">—</span>
+      </div>
+    </div>
+
+    <div class="dish-modal-body">
+      <div class="dish-modal-head">
+        <h2 id="modalName">—</h2>
+        <span class="dish-modal-price" id="modalPrice">—</span>
+      </div>
+
+      <div class="dish-modal-section" id="modalDescWrap">
+        <h3>{L.description}</h3>
+        <p id="modalDesc">—</p>
+      </div>
+
+      <div class="dish-modal-section" id="modalPrepWrap">
+        <h3>{L.preparation}</h3>
+        <p id="modalPrep">—</p>
+      </div>
+
+      <div class="dish-modal-section dish-modal-allergens" id="modalAllergensWrap">
+        <h3>{L.allergens}</h3>
+        <ul id="modalAllergens"></ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ allDishes, allergenNames: L.allergen_names }}>
+  const modal = document.getElementById('dishModal');
+  if (modal) {
+    const dishMap = Object.fromEntries(allDishes.map(d => [d.id, d]));
+
+    function open(id) {
+      const dish = dishMap[id];
+      if (!dish) return;
+
+      const img = document.getElementById('modalImage');
+      const fallback = document.getElementById('modalImageFallback');
+      const fallbackText = document.getElementById('modalImageFallbackText');
+
+      // Imagen con fallback
+      img.src = dish.image || '';
+      img.alt = dish.name;
+      img.style.display = '';
+      fallback.style.display = 'none';
+      fallbackText.textContent = `Foto · ${dish.name}`;
+      img.onerror = () => {
+        img.style.display = 'none';
+        fallback.style.display = 'flex';
+      };
+      // Si no hay imagen, mostrar fallback directamente
+      if (!dish.image) {
+        img.style.display = 'none';
+        fallback.style.display = 'flex';
+      }
+
+      document.getElementById('modalName').textContent = dish.name;
+      // Precio: ocultar si está vacío (caso del menú del viernes)
+      const priceEl = document.getElementById('modalPrice');
+      if (dish.price) {
+        priceEl.textContent = dish.price;
+        priceEl.style.display = '';
+      } else {
+        priceEl.textContent = '';
+        priceEl.style.display = 'none';
+      }
+
+      // Descripción (oculta si no hay)
+      const descWrap = document.getElementById('modalDescWrap');
+      if (dish.desc) {
+        document.getElementById('modalDesc').textContent = dish.desc;
+        descWrap.style.display = '';
+      } else {
+        descWrap.style.display = 'none';
+      }
+
+      // Preparación (oculta si no hay)
+      const prepWrap = document.getElementById('modalPrepWrap');
+      if (dish.preparation) {
+        document.getElementById('modalPrep').textContent = dish.preparation;
+        prepWrap.style.display = '';
+      } else {
+        prepWrap.style.display = 'none';
+      }
+
+      // Alérgenos
+      const wrap = document.getElementById('modalAllergensWrap');
+      const ul = document.getElementById('modalAllergens');
+      ul.innerHTML = '';
+      if (dish.allergens && dish.allergens.length > 0) {
+        wrap.style.display = '';
+        dish.allergens.forEach(a => {
+          const li = document.createElement('li');
+          li.textContent = allergenNames[a] || a;
+          ul.appendChild(li);
+        });
+      } else {
+        wrap.style.display = 'none';
+      }
+
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function close() {
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    // Listeners para abrir
+    document.querySelectorAll('[data-open-dish]').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = btn.getAttribute('data-open-dish');
+        open(id);
+      });
+    });
+
+    // Listeners para cerrar
+    modal.querySelectorAll('[data-close-modal]').forEach(el => {
+      el.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
+        close();
+      }
+    });
+  }
+</script>
+
+<style>
+  .dish-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+  .dish-modal[aria-hidden="false"] {
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  .dish-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .dish-modal-content {
+    position: relative;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    max-width: 920px;
+    width: calc(100% - 2rem);
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+  }
+  .dish-modal[aria-hidden="false"] .dish-modal-content {
+    transform: translateY(0);
+  }
+
+  .dish-modal-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 40px;
+    height: 40px;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .dish-modal-close:hover {
+    background: var(--copper);
+    color: var(--bg);
+    border-color: var(--copper);
+  }
+
+  .dish-modal-image {
+    position: relative;
+    background: linear-gradient(135deg, #2a241e 0%, #1a1612 100%);
+    min-height: 100%;
+  }
+  .dish-modal-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .dish-modal-image-fallback {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    letter-spacing: 0.15em;
+    color: var(--copper);
+    opacity: 0.5;
+    text-align: center;
+    padding: 1rem;
+  }
+  .dish-modal-image-fallback::after {
+    content: "";
+    position: absolute;
+    inset: 16px;
+    border: 1px dashed rgba(200, 116, 58, 0.3);
+  }
+
+  .dish-modal-body {
+    padding: 2.5rem 2rem;
+  }
+  .dish-modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .dish-modal-head h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    letter-spacing: 0.05em;
+    color: var(--cream);
+    line-height: 1;
+  }
+  .dish-modal-price {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    color: var(--copper-bright);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .dish-modal-section {
+    margin-bottom: 1.75rem;
+  }
+  .dish-modal-section h3 {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    letter-spacing: 0.25em;
+    color: var(--copper);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+  }
+  .dish-modal-section p {
+    font-family: var(--font-serif);
+    font-size: 1.02rem;
+    color: var(--cream-soft);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .dish-modal-allergens ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .dish-modal-allergens li {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    padding: 0.35rem 0.85rem;
+    border-radius: 2px;
+    font-family: var(--font-body);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    color: var(--cream-soft);
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 768px) {
+    .dish-modal-content {
+      grid-template-columns: 1fr;
+      max-height: 90vh;
+    }
+    .dish-modal-image { aspect-ratio: 4/3; min-height: auto; }
+    .dish-modal-body { padding: 2rem 1.25rem; }
+    .dish-modal-head { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+  }
+</style>

@@ -1,0 +1,134 @@
+---
+import { useTranslations, type Lang } from '@i18n/index';
+import { restaurant } from '@content/restaurant';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Rutas legales por idioma
+const legalRoutes = {
+  es: {
+    aviso: '/es/aviso-legal',
+    privacidad: '/es/privacidad',
+    cookies: '/es/cookies',
+  },
+  eu: {
+    aviso: '/eu/lege-oharra',
+    privacidad: '/eu/pribatutasuna',
+    cookies: '/eu/cookieak',
+  },
+}[lang];
+---
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">{restaurant.shortName.toUpperCase()} <span>·</span> MEET POINT</div>
+    <p class="footer-tag">{t('footer.tag')}</p>
+
+    <nav class="footer-legal" aria-label={t('footer.legal_nav')}>
+      <a href={legalRoutes.aviso}>{t('footer.aviso_legal')}</a>
+      <span class="sep">·</span>
+      <a href={legalRoutes.privacidad}>{t('footer.privacidad')}</a>
+      <span class="sep">·</span>
+      <a href={legalRoutes.cookies}>{t('footer.cookies')}</a>
+      <span class="sep">·</span>
+      <button type="button" class="footer-link-btn" id="footerCookieConfig">
+        {t('footer.config_cookies')}
+      </button>
+    </nav>
+
+    <div class="footer-meta">
+      <span>{t('footer.rights')}</span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    background: var(--bg-deep);
+    padding: 3rem var(--gutter) 4rem;
+    text-align: center;
+    border-top: 1px solid var(--line);
+  }
+  .footer-inner {
+    max-width: var(--container-max);
+    margin: 0 auto;
+  }
+  .footer-logo {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    letter-spacing: 0.1em;
+    color: var(--cream);
+    margin-bottom: 0.5rem;
+  }
+  .footer-logo span { color: var(--copper); }
+  .footer-tag {
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--cream-soft);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-legal {
+    margin: 1.5rem auto 0;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cream-mute);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 0.75rem;
+    justify-content: center;
+    align-items: center;
+    max-width: 720px;
+  }
+  .footer-legal a,
+  .footer-legal .footer-link-btn {
+    color: var(--cream-soft);
+    transition: color var(--transition-fast);
+  }
+  .footer-legal a:hover,
+  .footer-legal .footer-link-btn:hover {
+    color: var(--copper-bright);
+  }
+  .footer-legal .sep {
+    color: var(--cream-mute);
+    opacity: 0.5;
+  }
+  .footer-link-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+  }
+
+  .footer-meta {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--cream-mute);
+    text-transform: uppercase;
+    margin-top: 1.5rem;
+  }
+
+  @media (max-width: 600px) {
+    .footer-legal .sep { display: none; }
+    .footer-legal { flex-direction: column; gap: 0.5rem; }
+  }
+</style>
+
+<script>
+  document.getElementById('footerCookieConfig')?.addEventListener('click', () => {
+    window.dispatchEvent(new CustomEvent('cookie-consent:open'));
+  });
+</script>
