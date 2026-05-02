@@ -33,7 +33,7 @@ export const titular = {
   // Contacto
   email: 'info@errekameetpoint.example',
   phone: '+34 659 81 31 52',
-  website: 'https://erreka-meet-point.example',
+  website: 'https://erreka-web.vercel.app',
 } as const;
 
 /* ============================================================

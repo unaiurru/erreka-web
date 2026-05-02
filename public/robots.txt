@@ -27,4 +27,4 @@ Disallow: /
 User-agent: Amazonbot
 Disallow: /
 
-Sitemap: https://erreka-meet-point.example/sitemap.xml
+Sitemap: https://erreka-web.vercel.app/sitemap.xml

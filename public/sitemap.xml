@@ -15,134 +15,134 @@
 
   <!-- Inicio -->
   <url>
-    <loc>https://erreka-meet-point.example/es/</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/" />
+    <loc>https://erreka-web.vercel.app/es/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-web.vercel.app/es/" />
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://erreka-meet-point.example/eu/</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/" />
+    <loc>https://erreka-web.vercel.app/eu/</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-web.vercel.app/es/" />
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <!-- Carta -->
   <url>
-    <loc>https://erreka-meet-point.example/es/carta</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/carta" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/karta" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/carta" />
+    <loc>https://erreka-web.vercel.app/es/carta</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/carta" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/karta" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-web.vercel.app/es/carta" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://erreka-meet-point.example/eu/karta</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/carta" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/karta" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/carta" />
+    <loc>https://erreka-web.vercel.app/eu/karta</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/carta" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/karta" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-web.vercel.app/es/carta" />
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- Sobre nosotros -->
   <url>
-    <loc>https://erreka-meet-point.example/es/sobre-nosotros</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/sobre-nosotros" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/gu-nor-garen" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/sobre-nosotros" />
+    <loc>https://erreka-web.vercel.app/es/sobre-nosotros</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/sobre-nosotros" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/gu-nor-garen" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-web.vercel.app/es/sobre-nosotros" />
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://erreka-meet-point.example/eu/gu-nor-garen</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/sobre-nosotros" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/gu-nor-garen" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/sobre-nosotros" />
+    <loc>https://erreka-web.vercel.app/eu/gu-nor-garen</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/sobre-nosotros" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/gu-nor-garen" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-web.vercel.app/es/sobre-nosotros" />
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <!-- Reservas -->
   <url>
-    <loc>https://erreka-meet-point.example/es/reservas</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/reservas" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/erreserbak" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/reservas" />
+    <loc>https://erreka-web.vercel.app/es/reservas</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/reservas" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/erreserbak" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-web.vercel.app/es/reservas" />
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://erreka-meet-point.example/eu/erreserbak</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/reservas" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/erreserbak" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/reservas" />
+    <loc>https://erreka-web.vercel.app/eu/erreserbak</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/reservas" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/erreserbak" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-web.vercel.app/es/reservas" />
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <!-- Contacto -->
   <url>
-    <loc>https://erreka-meet-point.example/es/contacto</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/contacto" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/kontaktua" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/contacto" />
+    <loc>https://erreka-web.vercel.app/es/contacto</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/contacto" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/kontaktua" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-web.vercel.app/es/contacto" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://erreka-meet-point.example/eu/kontaktua</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/contacto" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/kontaktua" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-meet-point.example/es/contacto" />
+    <loc>https://erreka-web.vercel.app/eu/kontaktua</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/contacto" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/kontaktua" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://erreka-web.vercel.app/es/contacto" />
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <!-- Páginas legales -->
   <url>
-    <loc>https://erreka-meet-point.example/es/aviso-legal</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/aviso-legal" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/lege-oharra" />
+    <loc>https://erreka-web.vercel.app/es/aviso-legal</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/aviso-legal" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/lege-oharra" />
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://erreka-meet-point.example/eu/lege-oharra</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/aviso-legal" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/lege-oharra" />
+    <loc>https://erreka-web.vercel.app/eu/lege-oharra</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/aviso-legal" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/lege-oharra" />
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://erreka-meet-point.example/es/privacidad</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/privacidad" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/pribatutasuna" />
+    <loc>https://erreka-web.vercel.app/es/privacidad</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/privacidad" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/pribatutasuna" />
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://erreka-meet-point.example/eu/pribatutasuna</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/privacidad" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/pribatutasuna" />
+    <loc>https://erreka-web.vercel.app/eu/pribatutasuna</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/privacidad" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/pribatutasuna" />
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://erreka-meet-point.example/es/cookies</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/cookies" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/cookieak" />
+    <loc>https://erreka-web.vercel.app/es/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/cookies" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/cookieak" />
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://erreka-meet-point.example/eu/cookieak</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-meet-point.example/es/cookies" />
-    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-meet-point.example/eu/cookieak" />
+    <loc>https://erreka-web.vercel.app/eu/cookieak</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://erreka-web.vercel.app/es/cookies" />
+    <xhtml:link rel="alternate" hreflang="eu" href="https://erreka-web.vercel.app/eu/cookieak" />
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
