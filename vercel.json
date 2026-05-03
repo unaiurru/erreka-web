@@ -17,9 +17,7 @@
         }
       ]
     },
-
     {
-      "comment": "Panel de administración Decap CMS — necesita CSP más permisivo para cargar el script de unpkg, hablar con la API de GitHub y mostrar imágenes del repo",
       "source": "/admin/(.*)",
       "headers": [
         { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
@@ -30,16 +28,13 @@
         }
       ]
     },
-
     {
-      "comment": "Endpoints OAuth — el callback escribe HTML con un script que hace postMessage al opener (panel de admin)",
       "source": "/api/(.*)",
       "headers": [
         { "key": "Cross-Origin-Opener-Policy", "value": "same-origin-allow-popups" },
         { "key": "Cache-Control", "value": "no-store" }
       ]
     },
-
     {
       "source": "/_astro/(.*)",
       "headers": [
