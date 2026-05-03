@@ -19,7 +19,7 @@
     "instagram": "https://www.instagram.com/errekameetpoint"
   },
   "hours": [
-    { "day": "mon", "open": "12:30", "close": "23:30", "closed": false },
+    { "day": "mon", "open": "13:30", "close": "23:30", "closed": false },
     { "day": "tue", "open": "12:30", "close": "23:30", "closed": false },
     { "day": "wed", "open": "12:30", "close": "23:30", "closed": false },
     { "day": "thu", "open": "12:30", "close": "23:30", "closed": false },
