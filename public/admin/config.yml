@@ -1,0 +1,295 @@
+# =============================================================
+# Decap CMS — configuración del panel de administración
+# =============================================================
+# Esto define qué ven los del Erreka cuando entren a /admin/.
+# Cada `collection` es un grupo editable: la carta, el menú del
+# viernes, los datos de contacto, etc.
+#
+# Las rutas (`file:`) DEBEN coincidir con los JSON reales del
+# proyecto. Si mueves un archivo, recuerda actualizar aquí.
+#
+# Documentación: https://decapcms.org/docs/
+
+# -------------------------------------------------------------
+# BACKEND — cómo se conecta Decap con GitHub para guardar cambios.
+# Usamos GitHub directo + un proxy OAuth alojado en /api/auth
+# (ver archivos en `api/`). NO usamos Netlify Identity.
+# -------------------------------------------------------------
+backend:
+  name: github
+  repo: unaiurru/erreka-web        # ⚠️  cambiar al repo real cuando esté
+  branch: main
+  base_url: https://erreka-web.vercel.app
+  auth_endpoint: api/auth
+
+# Editor: estilo "simple" (un cambio = un commit) frente a editorial
+# workflow (que añade un paso de revisión). Más simple para el cliente.
+publish_mode: simple
+
+# Carpeta donde Decap subirá las imágenes que el cliente arrastre al panel.
+media_folder: "public/images/dishes"
+public_folder: "/images/dishes"
+
+# Idioma del panel
+locale: 'es'
+
+# -------------------------------------------------------------
+# COLECCIONES — los formularios editables
+# -------------------------------------------------------------
+collections:
+
+  # ===========================================================
+  # CARTA — el formulario más usado. Una pestaña por categoría.
+  # ===========================================================
+  - name: "carta"
+    label: "🍔 Carta"
+    label_singular: "Carta"
+    description: "Platos de la carta. Cuatro categorías: entrantes, burgers, novedades y postres."
+    files:
+      - name: "menu"
+        label: "Carta completa"
+        file: "src/content/menu.json"
+        fields:
+          - label: "Entrantes"
+            name: "starters"
+            widget: "list"
+            summary: "{{fields.name.es}} — {{fields.price}}"
+            fields: &dishFields
+              - { label: "ID interno (sin espacios)", name: "id", widget: "string", hint: "Identificador único. Una vez creado, no cambiarlo." }
+              - label: "Nombre"
+                name: "name"
+                widget: "object"
+                hint: "Si el nombre es una marca/no se traduce, escribe lo mismo en ambos campos."
+                fields:
+                  - { label: "Nombre en castellano", name: "es", widget: "string" }
+                  - { label: "Nombre en euskera", name: "eu", widget: "string" }
+              - { label: "Precio", name: "price", widget: "string", hint: "Ejemplo: 12,50 €" }
+              - label: "Descripción corta"
+                name: "desc"
+                widget: "object"
+                required: false
+                fields:
+                  - { label: "Castellano", name: "es", widget: "text", required: false }
+                  - { label: "Euskera", name: "eu", widget: "text", required: false }
+              - { label: "Foto", name: "image", widget: "image", required: false, hint: "Tamaño recomendado: 800×600 px. Si no subes foto, se muestra un placeholder elegante." }
+              - label: "Preparación detallada (opcional)"
+                name: "preparation"
+                widget: "object"
+                required: false
+                hint: "Si lo rellenas, el plato se vuelve clickable en la web y abre un modal con esta explicación."
+                fields:
+                  - { label: "Castellano", name: "es", widget: "text", required: false }
+                  - { label: "Euskera", name: "eu", widget: "text", required: false }
+              - label: "Alérgenos"
+                name: "allergens"
+                widget: "select"
+                multiple: true
+                required: false
+                options: ["gluten", "lacteos", "huevo", "pescado", "mariscos", "frutos_secos", "soja", "sesamo", "mostaza", "apio", "sulfitos"]
+              - { label: "Plato estrella ★", name: "highlight", widget: "boolean", required: false, default: false, hint: "Aparece en la home como recomendado." }
+
+          - label: "Burgers"
+            name: "burgers"
+            widget: "list"
+            summary: "{{fields.name.es}} — {{fields.price}}"
+            fields: *dishFields
+
+          - label: "Novedades"
+            name: "novelties"
+            widget: "list"
+            summary: "{{fields.name.es}} — {{fields.price}}"
+            fields: *dishFields
+
+          - label: "Postres"
+            name: "desserts"
+            widget: "list"
+            summary: "{{fields.name.es}} — {{fields.price}}"
+            fields: *dishFields
+
+  # ===========================================================
+  # MENÚ DEL VIERNES
+  # ===========================================================
+  - name: "viernes"
+    label: "🗓️ Menú del viernes"
+    description: "El menú del día que se ofrece los viernes. Editar precio y los 4 cursos."
+    files:
+      - name: "friday"
+        label: "Menú del viernes"
+        file: "src/content/friday-menu.json"
+        fields:
+          - { label: "Precio del menú completo", name: "price", widget: "string", hint: "Ejemplo: 16,50 €" }
+
+          - label: "Entrantes"
+            name: "starter"
+            widget: "list"
+            summary: "{{fields.name.es}}"
+            fields: &fmDishFields
+              - { label: "ID interno", name: "id", widget: "string" }
+              - label: "Nombre"
+                name: "name"
+                widget: "object"
+                fields:
+                  - { label: "Castellano", name: "es", widget: "string" }
+                  - { label: "Euskera", name: "eu", widget: "string" }
+              - { label: "Foto", name: "image", widget: "image", required: false }
+              - label: "Descripción corta"
+                name: "desc"
+                widget: "object"
+                required: false
+                fields:
+                  - { label: "Castellano", name: "es", widget: "text", required: false }
+                  - { label: "Euskera", name: "eu", widget: "text", required: false }
+              - label: "Preparación detallada (opcional)"
+                name: "preparation"
+                widget: "object"
+                required: false
+                fields:
+                  - { label: "Castellano", name: "es", widget: "text", required: false }
+                  - { label: "Euskera", name: "eu", widget: "text", required: false }
+              - label: "Alérgenos"
+                name: "allergens"
+                widget: "select"
+                multiple: true
+                required: false
+                options: ["gluten", "lacteos", "huevo", "pescado", "mariscos", "frutos_secos", "soja", "sesamo", "mostaza", "apio", "sulfitos"]
+
+          - label: "Principales"
+            name: "main"
+            widget: "list"
+            summary: "{{fields.name.es}}"
+            fields: *fmDishFields
+
+          - label: "Postres"
+            name: "dessert"
+            widget: "list"
+            summary: "{{fields.name.es}}"
+            fields: *fmDishFields
+
+          - label: "Bebidas"
+            name: "drink"
+            widget: "list"
+            summary: "{{fields.name.es}}"
+            fields: *fmDishFields
+
+  # ===========================================================
+  # DATOS DEL RESTAURANTE — contacto, horarios, dirección
+  # ===========================================================
+  - name: "restaurante"
+    label: "🏪 Datos del restaurante"
+    description: "Teléfono, dirección, horarios y redes sociales."
+    files:
+      - name: "info"
+        label: "Información del restaurante"
+        file: "src/content/restaurant.json"
+        fields:
+          - { label: "Nombre completo", name: "name", widget: "string" }
+          - { label: "Nombre corto", name: "shortName", widget: "string" }
+          - { label: "Año de apertura", name: "since", widget: "number", value_type: "int", min: 1900, max: 2100 }
+
+          - { label: "Teléfono (con prefijo, sin espacios)", name: "phone", widget: "string", hint: "Ejemplo: +34659813152" }
+          - { label: "Teléfono visible (con espacios)", name: "phoneDisplay", widget: "string", hint: "Ejemplo: 659 81 31 52" }
+          - { label: "WhatsApp (sin + ni espacios)", name: "whatsapp", widget: "string", hint: "Ejemplo: 34659813152" }
+          - { label: "Email", name: "email", widget: "string" }
+
+          - label: "Dirección"
+            name: "address"
+            widget: "object"
+            fields:
+              - { label: "Calle y número", name: "street", widget: "string" }
+              - { label: "Ciudad", name: "city", widget: "string" }
+              - { label: "Provincia", name: "province", widget: "string" }
+              - { label: "Código postal", name: "postalCode", widget: "string" }
+              - { label: "País (código ISO)", name: "country", widget: "string", default: "ES" }
+              - { label: "Latitud", name: "lat", widget: "number", value_type: "float", required: false }
+              - { label: "Longitud", name: "lng", widget: "number", value_type: "float", required: false }
+
+          - label: "Redes sociales"
+            name: "social"
+            widget: "object"
+            fields:
+              - { label: "Instagram (URL)", name: "instagram", widget: "string", required: false }
+
+          - label: "Horarios"
+            name: "hours"
+            widget: "list"
+            summary: "{{fields.day}} — {{fields.open}} a {{fields.close}}"
+            fields:
+              - label: "Día"
+                name: "day"
+                widget: "select"
+                options:
+                  - { label: "Lunes", value: "mon" }
+                  - { label: "Martes", value: "tue" }
+                  - { label: "Miércoles", value: "wed" }
+                  - { label: "Jueves", value: "thu" }
+                  - { label: "Viernes", value: "fri" }
+                  - { label: "Sábado", value: "sat" }
+                  - { label: "Domingo", value: "sun" }
+              - { label: "Apertura", name: "open", widget: "string", required: false, hint: "HH:MM. Dejar vacío si está cerrado." }
+              - { label: "Cierre", name: "close", widget: "string", required: false, hint: "HH:MM. Dejar vacío si está cerrado." }
+              - { label: "Cerrado este día", name: "closed", widget: "boolean", default: false }
+
+  # ===========================================================
+  # TEXTOS DE LA WEB — tagline, "sobre nosotros", etc.
+  # ===========================================================
+  - name: "textos"
+    label: "✏️ Textos de la web"
+    description: "Frase principal, sección 'Quiénes somos', etc. En castellano y euskera."
+    files:
+      - name: "textos_es"
+        label: "Textos en castellano"
+        file: "src/i18n/es.json"
+        fields:
+          - label: "Inicio · Hero"
+            name: "home"
+            widget: "object"
+            fields:
+              - label: "Hero"
+                name: "hero"
+                widget: "object"
+                fields:
+                  - { label: "Texto pequeño superior", name: "since", widget: "string" }
+                  - { label: "Frase principal", name: "tagline", widget: "text" }
+                  - { label: "Botón reserva", name: "cta_reserve", widget: "string" }
+                  - { label: "Botón carta", name: "cta_menu", widget: "string" }
+              - label: "Sobre nosotros"
+                name: "about"
+                widget: "object"
+                fields:
+                  - { label: "Etiqueta", name: "label", widget: "string" }
+                  - { label: "Título línea 1", name: "title_line1", widget: "string" }
+                  - { label: "Título línea 2", name: "title_line2", widget: "string" }
+                  - { label: "Párrafo 1", name: "p1", widget: "text" }
+                  - { label: "Párrafo 2", name: "p2", widget: "text" }
+                  - { label: "Párrafo 3", name: "p3", widget: "text" }
+
+        # Decap nos exigirá tener el resto del JSON intacto;
+        # los campos no listados aquí NO los podrá editar el cliente
+        # pero TAMPOCO los borrará. Quedan tal cual.
+
+      - name: "textos_eu"
+        label: "Textos en euskera"
+        file: "src/i18n/eu.json"
+        fields:
+          - label: "Hasiera · Hero"
+            name: "home"
+            widget: "object"
+            fields:
+              - label: "Hero"
+                name: "hero"
+                widget: "object"
+                fields:
+                  - { label: "Goiko testu txikia", name: "since", widget: "string" }
+                  - { label: "Esaldi nagusia", name: "tagline", widget: "text" }
+                  - { label: "Erreserba botoia", name: "cta_reserve", widget: "string" }
+                  - { label: "Karta botoia", name: "cta_menu", widget: "string" }
+              - label: "Gu nor garen"
+                name: "about"
+                widget: "object"
+                fields:
+                  - { label: "Etiketa", name: "label", widget: "string" }
+                  - { label: "Titulu lerro 1", name: "title_line1", widget: "string" }
+                  - { label: "Titulu lerro 2", name: "title_line2", widget: "string" }
+                  - { label: "1. paragrafoa", name: "p1", widget: "text" }
+                  - { label: "2. paragrafoa", name: "p2", widget: "text" }
+                  - { label: "3. paragrafoa", name: "p3", widget: "text" }
