@@ -2,8 +2,11 @@
   "starters": [
     {
       "id": "patatas-caseras",
-      "name": { "es": "Patatas caseras", "eu": "Etxeko patatak" },
-      "price": "4,95 €",
+      "name": {
+        "es": "Patatas caseras",
+        "eu": "Etxeko patatak"
+      },
+      "price": "5,95 €",
       "image": "/images/dishes/patatas-caseras.jpg"
     },
     {
@@ -19,7 +22,10 @@
     },
     {
       "id": "croquetas",
-      "name": { "es": "Croquetas caseras", "eu": "Etxeko kroketak" },
+      "name": {
+        "es": "Croquetas caseras",
+        "eu": "Etxeko kroketak"
+      },
       "price": "9,95 €",
       "desc": {
         "es": "Jamón ibérico y txipis.",
@@ -29,7 +35,10 @@
     },
     {
       "id": "tiras-pollo",
-      "name": { "es": "Tiras de pollo", "eu": "Oilasko zerrendak" },
+      "name": {
+        "es": "Tiras de pollo",
+        "eu": "Oilasko zerrendak"
+      },
       "price": "10,50 €",
       "desc": {
         "es": "Solomillos de pollo estilo Kentucky.",
@@ -39,7 +48,10 @@
     },
     {
       "id": "ensalada-templada",
-      "name": { "es": "Ensalada templada", "eu": "Entsalada epela" },
+      "name": {
+        "es": "Ensalada templada",
+        "eu": "Entsalada epela"
+      },
       "price": "12,50 €",
       "desc": {
         "es": "Mezcla de lechugas, setas, queso de cabra, frutos secos y mermelada.",
@@ -49,7 +61,10 @@
     },
     {
       "id": "ensalada-cesar",
-      "name": { "es": "Ensalada César", "eu": "César entsalada" },
+      "name": {
+        "es": "Ensalada César",
+        "eu": "César entsalada"
+      },
       "price": "12,50 €",
       "desc": {
         "es": "Lechuga mezclum, picatostes, bacon bits, pollo crispy, lascas de parmesano y salsa césar.",
@@ -80,7 +95,10 @@
     },
     {
       "id": "alitas",
-      "name": { "es": "Alitas de pollo", "eu": "Oilasko hegalak" },
+      "name": {
+        "es": "Alitas de pollo",
+        "eu": "Oilasko hegalak"
+      },
       "price": "9,95 €",
       "desc": {
         "es": "8 unidades, glaseadas con BBQ japonesa y lluvia de maíces.",
@@ -112,7 +130,10 @@
   "burgers": [
     {
       "id": "la-de-siempre",
-      "name": { "es": "La de siempre", "eu": "Betikoa" },
+      "name": {
+        "es": "La de siempre",
+        "eu": "Betikoa"
+      },
       "price": "13,95 €",
       "desc": {
         "es": "180 g vaca madurada, lechuga, tomate, cebolla pochada, queso cheddar, bacon y huevo frito.",
@@ -123,7 +144,12 @@
         "es": "Carne de vaca madurada al menos 30 días, picada el mismo día y servida al punto que pidas. La cebolla se pocha despacio durante 40 minutos hasta caramelizar de forma natural, sin azúcar añadido. El bacon es ahumado en madera de haya y se fríe hasta quedar crujiente sin perder jugo. El huevo, frito al momento con yema líquida. Pan brioche de panadería local, ligeramente tostado en plancha.",
         "eu": "Gutxienez 30 egunez heldutako behi-haragia, egun berean txikitua eta eskatzen duzun puntuan zerbitzatua. Kipula 40 minutuz egiten da poliki, modu naturalean karamelatu arte, azukrerik gehitu gabe. Bacon-a pago-egurrarekin keztatua da eta krakatsu egon arte frijitzen da, zukurik galdu gabe. Arrautza, momentuan frijitua, gorringo likidoarekin. Bertako okindegiko brioche ogia, plantxan apur bat txigortua."
       },
-      "allergens": ["gluten", "lacteos", "huevo", "sulfitos"],
+      "allergens": [
+        "gluten",
+        "lacteos",
+        "huevo",
+        "sulfitos"
+      ],
       "highlight": true
     },
     {
@@ -148,7 +174,10 @@
     },
     {
       "id": "trufada",
-      "name": { "es": "Trufada", "eu": "Boilurduna" },
+      "name": {
+        "es": "Trufada",
+        "eu": "Boilurduna"
+      },
       "price": "13,95 €",
       "desc": {
         "es": "180 g vaca madurada, lechuga, setas, paletilla ibérica y mahonesa trufada.",
@@ -189,12 +218,21 @@
         "es": "La burger más bestia de la casa: 360 gramos de vaca madurada en dos discos cocinados a la plancha al estilo smash, dos lonchas de cheddar fundidas entre las capas, doble bacon ahumado, cebolla crujiente frita en harina de maíz y la salsa mafia, una mezcla casera de mayonesa, ajo asado, mostaza dijon y un toque de pimentón ahumado. Servida en pan brioche con corteza dorada en mantequilla.",
         "eu": "Etxeko hanburgesarik basatiena: 360 gramo heldutako behi-haragi bi diskotan, plantxan smash erara eginak, bi cheddar xafla geruzen artean urtuak, bacon keztatu bikoitza, arto-irinetan frijitutako kipula krakatsua eta mafia saltsa, maionesa, baratxuri erreta, dijon mostaza eta paprika keztatu ukitu batez egindako etxeko nahasketa. Brioche ogian zerbitzatzen da, gurinetan urreztatutako azalarekin."
       },
-      "allergens": ["gluten", "lacteos", "huevo", "mostaza", "sulfitos"],
+      "allergens": [
+        "gluten",
+        "lacteos",
+        "huevo",
+        "mostaza",
+        "sulfitos"
+      ],
       "highlight": true
     },
     {
       "id": "quesera",
-      "name": { "es": "Quesera", "eu": "Gaztaduna" },
+      "name": {
+        "es": "Quesera",
+        "eu": "Gaztaduna"
+      },
       "price": "13,95 €",
       "desc": {
         "es": "180 g vaca madurada, queso crema, cabra, cheddar, edam y bacon bits.",
@@ -204,7 +242,10 @@
     },
     {
       "id": "cabra-loca",
-      "name": { "es": "Cabra Loca", "eu": "Ahuntz Eroa" },
+      "name": {
+        "es": "Cabra Loca",
+        "eu": "Ahuntz Eroa"
+      },
       "price": "12,95 €",
       "desc": {
         "es": "Pollo crispy, queso de cabra, cebolla caramelizada y alioli.",
@@ -214,7 +255,10 @@
     },
     {
       "id": "de-campo",
-      "name": { "es": "De Campo", "eu": "Baratzekoa" },
+      "name": {
+        "es": "De Campo",
+        "eu": "Baratzekoa"
+      },
       "price": "11,95 €",
       "desc": {
         "es": "Burger a base de kale y quinoa, lechuga, tomate, cebolla pochada y huevo frito.",
@@ -254,7 +298,10 @@
     },
     {
       "id": "pollo-teriyaki",
-      "name": { "es": "Pollo Teriyaki", "eu": "Oilasko Teriyaki" },
+      "name": {
+        "es": "Pollo Teriyaki",
+        "eu": "Oilasko Teriyaki"
+      },
       "price": "12,95 €",
       "desc": {
         "es": "Pollo crispy, pepinillos, lechuga, cebolla encurtida, salsa teriyaki y mayonesa de lima.",
@@ -266,7 +313,10 @@
   "novelties": [
     {
       "id": "gyozas-langostino",
-      "name": { "es": "Gyozas de langostino", "eu": "Otarrainxken gyozak" },
+      "name": {
+        "es": "Gyozas de langostino",
+        "eu": "Otarrainxken gyozak"
+      },
       "price": "12 €",
       "desc": {
         "es": "Gyozas de langostino ligeramente picantes envueltas en panko, salsa teriyaki y salsa de curry y mango.",
@@ -277,12 +327,21 @@
         "es": "Masa de gyoza fresca rellena con langostino picado, jengibre, cebolleta y un toque de aceite de sésamo. Selladas a la plancha y luego pasadas por panko japonés que les da el contraste crujiente. Acompañadas de dos salsas: teriyaki casera reducida con sake y mirin, y una salsa de curry suave con mango fresco que equilibra el picante de la gyoza.",
         "eu": "Gyoza-ore freskoa, otarrainxka txikitua, jengibrea, tipulina eta sesamo-olio ukitu batekin betea. Plantxan zigilatuak eta gero panko japoniarretik pasatuak, kontraste krakatsua emateko. Bi saltsekin lagunduta: etxeko teriyaki sake eta mirinekin laburtua, eta curry saltsa leuna mango freskoarekin, gyozaren mina orekatzen duena."
       },
-      "allergens": ["gluten", "mariscos", "soja", "sesamo", "huevo"],
+      "allergens": [
+        "gluten",
+        "mariscos",
+        "soja",
+        "sesamo",
+        "huevo"
+      ],
       "highlight": true
     },
     {
       "id": "brioche-carrilleras",
-      "name": { "es": "Brioche de carrilleras", "eu": "Masailen briochea" },
+      "name": {
+        "es": "Brioche de carrilleras",
+        "eu": "Masailen briochea"
+      },
       "price": "10,50 €",
       "desc": {
         "es": "Carrilleras al vino tinto desmechadas sobre brioche francés, coronado con cebolla encurtida, mayonesa de lima y cebollino.",
@@ -293,7 +352,12 @@
         "es": "Carrilleras de cerdo cocinadas a baja temperatura durante 6 horas con vino tinto crianza, puerro, zanahoria, ajo, laurel y un toque de pimienta negra. Una vez tiernas, se desmechan y se reducen con su propio jugo hasta concentrar sabores. Se sirven sobre brioche francés tostado en mantequilla, con cebolla morada encurtida 24 horas en vinagre de manzana, mayonesa casera con ralladura de lima y cebollino fresco.",
         "eu": "Txerri-masailak baxu-tenperaturan 6 orduz egosiak ardo beltz crianzarekin, porruarekin, azenarioarekin, baratxuriarekin, ereinotzarekin eta piper beltz ukitu batekin. Bigundu ondoren, xehatu eta beren saltsarekin laburtzen dira zaporeak kontzentratu arte. Brioche frantses gurinetan txigortuaren gainean zerbitzatzen dira, sagar-ozpinetan 24 orduz ozpindutako kipula moreareki, lima azalduradun etxeko maionesarekin eta tipulin freskoarekin."
       },
-      "allergens": ["gluten", "lacteos", "huevo", "sulfitos"]
+      "allergens": [
+        "gluten",
+        "lacteos",
+        "huevo",
+        "sulfitos"
+      ]
     },
     {
       "id": "lotus-burger",
@@ -317,7 +381,10 @@
     },
     {
       "id": "crepe-nutella",
-      "name": { "es": "Crêpe de Nutella", "eu": "Nutella crêpea" },
+      "name": {
+        "es": "Crêpe de Nutella",
+        "eu": "Nutella crêpea"
+      },
       "price": "6,50 €",
       "desc": {
         "es": "Crêpe francés relleno de Nutella con azúcar glass.",
@@ -329,7 +396,10 @@
   "desserts": [
     {
       "id": "tarta-queso",
-      "name": { "es": "Tarta de queso al horno", "eu": "Labean errea gazta tarta" },
+      "name": {
+        "es": "Tarta de queso al horno",
+        "eu": "Labean errea gazta tarta"
+      },
       "price": "6,50 €",
       "desc": {
         "es": "Clásica, Kinder, Lotus u Oreo.",
@@ -339,7 +409,10 @@
     },
     {
       "id": "coulant",
-      "name": { "es": "Coulant de chocolate", "eu": "Txokolate coulant-a" },
+      "name": {
+        "es": "Coulant de chocolate",
+        "eu": "Txokolate coulant-a"
+      },
       "price": "6,50 €",
       "desc": {
         "es": "Coulant casero de chocolate con helado de vainilla.",
@@ -349,7 +422,10 @@
     },
     {
       "id": "tostada-brioche",
-      "name": { "es": "Tostada de brioche", "eu": "Brioche txigortua" },
+      "name": {
+        "es": "Tostada de brioche",
+        "eu": "Brioche txigortua"
+      },
       "price": "6,50 €",
       "desc": {
         "es": "Tostada de brioche caramelizada con helado.",
