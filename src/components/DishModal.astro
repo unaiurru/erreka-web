@@ -10,9 +10,6 @@ interface Props {
 const { lang } = Astro.props;
 
 // Combinamos todos los platos para el script.
-// Incluimos los que tienen preparation O imagen (son los "interactivos").
-// Los platos del friday-menu no tienen "price" propio (forman parte del menú
-// de 16,50 €), así que dejamos price como cadena vacía y el modal lo oculta.
 const cartaDishes = [...starters, ...burgers, ...novelties, ...desserts]
   .filter(d => d.preparation || d.image)
   .map(d => ({
@@ -30,7 +27,7 @@ const fridayDishes = getFridayDishes()
   .map(d => ({
     id: d.id,
     name: d.name[lang],
-    price: '',                    // sin precio individual
+    price: '',
     image: d.image,
     desc: d.desc?.[lang] ?? '',
     preparation: d.preparation?.[lang] ?? '',
@@ -46,17 +43,11 @@ const labels = {
     description: 'Qué lleva',
     allergens: 'Alérgenos',
     allergen_names: {
-      gluten: 'Gluten',
-      lacteos: 'Lácteos',
-      huevo: 'Huevo',
-      pescado: 'Pescado',
-      mariscos: 'Mariscos',
-      frutos_secos: 'Frutos secos',
-      soja: 'Soja',
-      sesamo: 'Sésamo',
-      mostaza: 'Mostaza',
-      apio: 'Apio',
-      sulfitos: 'Sulfitos',
+      gluten: 'Gluten', lacteos: 'Lácteos', huevo: 'Huevo',
+      pescado: 'Pescado', mariscos: 'Mariscos',
+      frutos_secos: 'Frutos secos', soja: 'Soja',
+      sesamo: 'Sésamo', mostaza: 'Mostaza',
+      apio: 'Apio', sulfitos: 'Sulfitos',
     } as Record<string, string>,
   },
   eu: {
@@ -65,17 +56,11 @@ const labels = {
     description: 'Zer du',
     allergens: 'Alergenoak',
     allergen_names: {
-      gluten: 'Glutena',
-      lacteos: 'Esnekiak',
-      huevo: 'Arrautza',
-      pescado: 'Arraina',
-      mariscos: 'Itsaskiak',
-      frutos_secos: 'Fruitu lehorrak',
-      soja: 'Soja',
-      sesamo: 'Sesamoa',
-      mostaza: 'Mostaza',
-      apio: 'Apioa',
-      sulfitos: 'Sulfitoak',
+      gluten: 'Glutena', lacteos: 'Esnekiak', huevo: 'Arrautza',
+      pescado: 'Arraina', mariscos: 'Itsaskiak',
+      frutos_secos: 'Fruitu lehorrak', soja: 'Soja',
+      sesamo: 'Sesamoa', mostaza: 'Mostaza',
+      apio: 'Apioa', sulfitos: 'Sulfitoak',
     } as Record<string, string>,
   },
 };
@@ -125,105 +110,123 @@ const L = labels[lang];
 </div>
 
 <script define:vars={{ allDishes, allergenNames: L.allergen_names }}>
-  const modal = document.getElementById('dishModal');
-  if (modal) {
-    const dishMap = Object.fromEntries(allDishes.map(d => [d.id, d]));
+  /**
+   * Modal de plato — robusto frente a ViewTransitions.
+   *
+   * Antes: los listeners se ataban una vez (top-level) y desaparecían al
+   * navegar entre páginas. Resultado: tras cambiar de página, los botones
+   * dejaban de abrir el modal.
+   *
+   * Ahora:
+   *  · Listener único en `document` con event delegation → sobrevive a
+   *    cualquier swap del DOM.
+   *  · Los listeners de cerrar y de Escape se re-atan en cada page-load
+   *    porque el modal es parte del contenido swappeado.
+   *  · Flag `__erreka_modal_init` evita doble-binding del listener global.
+   */
+  const dishMap = Object.fromEntries(allDishes.map(d => [d.id, d]));
 
-    function open(id) {
-      const dish = dishMap[id];
-      if (!dish) return;
+  function getModal() {
+    return document.getElementById('dishModal');
+  }
 
-      const img = document.getElementById('modalImage');
-      const fallback = document.getElementById('modalImageFallback');
-      const fallbackText = document.getElementById('modalImageFallbackText');
+  function open(id) {
+    const dish = dishMap[id];
+    const modal = getModal();
+    if (!dish || !modal) return;
 
-      // Imagen con fallback
-      img.src = dish.image || '';
-      img.alt = dish.name;
-      img.style.display = '';
-      fallback.style.display = 'none';
-      fallbackText.textContent = `Foto · ${dish.name}`;
-      img.onerror = () => {
-        img.style.display = 'none';
-        fallback.style.display = 'flex';
-      };
-      // Si no hay imagen, mostrar fallback directamente
-      if (!dish.image) {
-        img.style.display = 'none';
-        fallback.style.display = 'flex';
-      }
+    const img = document.getElementById('modalImage');
+    const fallback = document.getElementById('modalImageFallback');
+    const fallbackText = document.getElementById('modalImageFallbackText');
 
-      document.getElementById('modalName').textContent = dish.name;
-      // Precio: ocultar si está vacío (caso del menú del viernes)
-      const priceEl = document.getElementById('modalPrice');
-      if (dish.price) {
-        priceEl.textContent = dish.price;
-        priceEl.style.display = '';
-      } else {
-        priceEl.textContent = '';
-        priceEl.style.display = 'none';
-      }
-
-      // Descripción (oculta si no hay)
-      const descWrap = document.getElementById('modalDescWrap');
-      if (dish.desc) {
-        document.getElementById('modalDesc').textContent = dish.desc;
-        descWrap.style.display = '';
-      } else {
-        descWrap.style.display = 'none';
-      }
-
-      // Preparación (oculta si no hay)
-      const prepWrap = document.getElementById('modalPrepWrap');
-      if (dish.preparation) {
-        document.getElementById('modalPrep').textContent = dish.preparation;
-        prepWrap.style.display = '';
-      } else {
-        prepWrap.style.display = 'none';
-      }
-
-      // Alérgenos
-      const wrap = document.getElementById('modalAllergensWrap');
-      const ul = document.getElementById('modalAllergens');
-      ul.innerHTML = '';
-      if (dish.allergens && dish.allergens.length > 0) {
-        wrap.style.display = '';
-        dish.allergens.forEach(a => {
-          const li = document.createElement('li');
-          li.textContent = allergenNames[a] || a;
-          ul.appendChild(li);
-        });
-      } else {
-        wrap.style.display = 'none';
-      }
-
-      modal.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
+    img.src = dish.image || '';
+    img.alt = dish.name;
+    img.style.display = '';
+    fallback.style.display = 'none';
+    fallbackText.textContent = `Foto · ${dish.name}`;
+    img.onerror = () => {
+      img.style.display = 'none';
+      fallback.style.display = 'flex';
+    };
+    if (!dish.image) {
+      img.style.display = 'none';
+      fallback.style.display = 'flex';
     }
 
-    function close() {
-      modal.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
+    document.getElementById('modalName').textContent = dish.name;
+    const priceEl = document.getElementById('modalPrice');
+    if (dish.price) {
+      priceEl.textContent = dish.price;
+      priceEl.style.display = '';
+    } else {
+      priceEl.textContent = '';
+      priceEl.style.display = 'none';
     }
 
-    // Listeners para abrir
-    document.querySelectorAll('[data-open-dish]').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.preventDefault();
-        e.stopPropagation();
-        const id = btn.getAttribute('data-open-dish');
-        open(id);
+    const descWrap = document.getElementById('modalDescWrap');
+    if (dish.desc) {
+      document.getElementById('modalDesc').textContent = dish.desc;
+      descWrap.style.display = '';
+    } else {
+      descWrap.style.display = 'none';
+    }
+
+    const prepWrap = document.getElementById('modalPrepWrap');
+    if (dish.preparation) {
+      document.getElementById('modalPrep').textContent = dish.preparation;
+      prepWrap.style.display = '';
+    } else {
+      prepWrap.style.display = 'none';
+    }
+
+    const wrap = document.getElementById('modalAllergensWrap');
+    const ul = document.getElementById('modalAllergens');
+    ul.innerHTML = '';
+    if (dish.allergens && dish.allergens.length > 0) {
+      wrap.style.display = '';
+      dish.allergens.forEach(a => {
+        const li = document.createElement('li');
+        li.textContent = allergenNames[a] || a;
+        ul.appendChild(li);
       });
+    } else {
+      wrap.style.display = 'none';
+    }
+
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function close() {
+    const modal = getModal();
+    if (!modal) return;
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  // Listener global de apertura — UNA sola vez por sesión, sobrevive a navegación.
+  if (!window.__erreka_modal_init) {
+    window.__erreka_modal_init = true;
+
+    document.addEventListener('click', (e) => {
+      const target = e.target instanceof Element ? e.target.closest('[data-open-dish]') : null;
+      if (!target) return;
+      e.preventDefault();
+      e.stopPropagation();
+      const id = target.getAttribute('data-open-dish');
+      if (id) open(id);
     });
 
-    // Listeners para cerrar
-    modal.querySelectorAll('[data-close-modal]').forEach(el => {
-      el.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const modal = getModal();
+      if (modal && modal.getAttribute('aria-hidden') === 'false') close();
     });
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && modal.getAttribute('aria-hidden') === 'false') {
-        close();
-      }
+
+    // Cerrar al hacer click en backdrop / botón X (delegado).
+    document.addEventListener('click', (e) => {
+      const target = e.target instanceof Element ? e.target.closest('[data-close-modal]') : null;
+      if (target) close();
     });
   }
 </script>

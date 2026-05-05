@@ -1,66 +1,122 @@
 ---
 /**
- * Trust signals: 5 estrellas + nota Google + total reseñas.
- * Componente decorativo de hero / about.
+ * Trust signals: enlace a las reseñas reales de Google.
+ *
+ * Lee `restaurant.json > reviews`. Tiene dos modos:
+ *   · Modo completo: rating + count + url → 5 estrellas + "4.7 · 320+ reseñas"
+ *   · Modo lite:     solo url             → ícono estrellas + "Ver reseñas en Google"
+ *   · Si no hay url, no se renderiza.
+ *
+ * Para activar el modo completo: edita restaurant.json y rellena rating y count.
  */
+import { restaurant } from '@content/restaurant';
 
 interface Props {
-  rating?: number;
-  reviews?: number;
+  rating?: number | null;
+  reviews?: number | null;
+  url?: string;
   source?: string;
 }
 
-const { rating = 4.7, reviews = 320, source = 'Google' } = Astro.props;
+const r = (restaurant as any).reviews ?? {};
 
-// Renderizado fraccional sencillo: estrella entera = filled, decimal >= 0.5 = half
-const full = Math.floor(rating);
-const half = rating - full >= 0.5;
+const rating = Astro.props.rating ?? r.rating ?? null;
+const reviewsCount = Astro.props.reviews ?? r.count ?? null;
+const url = Astro.props.url ?? r.url ?? '';
+const source = Astro.props.source ?? 'Google';
+
+const hasUrl = !!url;
+const hasFullData = typeof rating === 'number' && typeof reviewsCount === 'number' && hasUrl;
+
+const full = hasFullData ? Math.floor(rating as number) : 0;
+const half = hasFullData ? (rating as number) - full >= 0.5 : false;
 const empty = 5 - full - (half ? 1 : 0);
+
+const ratingStr = hasFullData ? Number(rating).toLocaleString('es-ES', { minimumFractionDigits: 1 }) : '';
+const reviewsLabel = hasFullData ? `${reviewsCount}+ reseñas en ${source}` : '';
+const liteLabel = `Ver reseñas en ${source}`;
+const ariaLabel = hasFullData
+  ? `${rating} sobre 5 estrellas en ${source}, ${reviewsCount} reseñas. Abrir en una pestaña nueva.`
+  : `Abrir reseñas en ${source} en una pestaña nueva.`;
 ---
 
-<div class="trust">
-  <div class="stars" aria-hidden="true">
-    {Array.from({ length: full }).map(() => (
+{hasUrl && hasFullData && (
+  <a
+    class="trust"
+    href={url}
+    target="_blank"
+    rel="noopener nofollow"
+    aria-label={ariaLabel}
+  >
+    <span class="stars" aria-hidden="true">
+      {Array.from({ length: full }).map(() => (
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" class="star filled">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      ))}
+      {half && (
+        <svg viewBox="0 0 24 24" class="star half">
+          <defs>
+            <linearGradient id="halfStar">
+              <stop offset="50%" stop-color="currentColor"/>
+              <stop offset="50%" stop-color="transparent"/>
+            </linearGradient>
+          </defs>
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                   fill="url(#halfStar)" stroke="currentColor" stroke-width="1.2"/>
+        </svg>
+      )}
+      {Array.from({ length: empty }).map(() => (
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="star empty">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      ))}
+    </span>
+    <span class="meta">
+      <strong>{ratingStr}</strong>
+      <span class="sep">·</span>
+      {reviewsLabel}
+    </span>
+  </a>
+)}
+
+{hasUrl && !hasFullData && (
+  <a
+    class="trust trust--lite"
+    href={url}
+    target="_blank"
+    rel="noopener nofollow"
+    aria-label={ariaLabel}
+  >
+    <span class="stars" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" class="star filled">
         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
       </svg>
-    ))}
-    {half && (
-      <svg viewBox="0 0 24 24" class="star half">
-        <defs>
-          <linearGradient id="halfStar">
-            <stop offset="50%" stop-color="currentColor"/>
-            <stop offset="50%" stop-color="transparent"/>
-          </linearGradient>
-        </defs>
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
-                 fill="url(#halfStar)" stroke="currentColor" stroke-width="1.2"/>
-      </svg>
-    )}
-    {Array.from({ length: empty }).map(() => (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="star empty">
-        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-      </svg>
-    ))}
-  </div>
-  <span class="meta">
-    <strong>{rating.toLocaleString('es-ES', { minimumFractionDigits: 1 })}</strong>
-    <span class="sep">·</span>
-    {reviews}+ reseñas en {source}
-  </span>
-</div>
+    </span>
+    <span class="meta">{liteLabel}</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="external" aria-hidden="true">
+      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+      <polyline points="15 3 21 3 21 9"/>
+      <line x1="10" y1="14" x2="21" y2="3"/>
+    </svg>
+  </a>
+)}
 
 <style>
   .trust {
     display: inline-flex;
     align-items: center;
-    gap: 0.85rem;
+    gap: 0.65rem;
     flex-wrap: wrap;
     color: var(--cream-soft);
     font-family: var(--font-body);
     font-size: 0.85rem;
     letter-spacing: 0.05em;
+    transition: color 0.2s ease;
   }
+  .trust:hover { color: var(--cream); }
+  .trust:hover .stars { color: var(--copper-bright); }
+
   .stars {
     display: inline-flex;
     gap: 0.15rem;
@@ -69,9 +125,7 @@ const empty = 5 - full - (half ? 1 : 0);
   .star { width: 16px; height: 16px; }
   .star.empty { opacity: 0.45; }
 
-  .meta {
-    color: var(--cream-mute);
-  }
+  .meta { color: var(--cream-mute); }
   .meta strong {
     color: var(--cream);
     font-weight: 600;
@@ -82,4 +136,24 @@ const empty = 5 - full - (half ? 1 : 0);
     margin: 0 0.35rem;
     opacity: 0.5;
   }
+
+  /* Modo lite: pill discreto con icono externo */
+  .trust--lite {
+    padding: 0.45rem 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.2);
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+  }
+  .trust--lite:hover {
+    border-color: var(--copper);
+    background: rgba(200, 116, 58, 0.08);
+  }
+  .trust--lite .external {
+    width: 13px;
+    height: 13px;
+    color: var(--cream-mute);
+    margin-left: 0.1rem;
+  }
+  .trust--lite:hover .external { color: var(--copper-bright); }
 </style>

@@ -42,6 +42,8 @@ export type Dish = {
   preparation?: DishDescription;
   /** Alérgenos detectados según RD 126/2015. */
   allergens?: Allergen[];
+  /** Plato apto para vegetarianos (sin carne ni pescado). */
+  vegetarian?: boolean;
   highlight?: boolean;
 };
 

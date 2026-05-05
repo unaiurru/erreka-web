@@ -18,6 +18,13 @@
   "social": {
     "instagram": "https://www.instagram.com/errekameetpoint"
   },
+  "reviews": {
+    "comment": "Reseñas de Google. El placeId y url están conectados. Cuando consigas el rating y el número de reseñas reales, rellena rating + count y aparecerán en el hero.",
+    "rating": null,
+    "count": null,
+    "placeId": "ChIJy4IXYyJRTg0ROEwYZMl0fck",
+    "url": "https://search.google.com/local/reviews?placeid=ChIJy4IXYyJRTg0ROEwYZMl0fck"
+  },
   "hours": [
     { "day": "mon", "open": "13:30", "close": "23:30", "closed": false },
     { "day": "tue", "open": "12:30", "close": "23:30", "closed": false },

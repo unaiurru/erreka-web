@@ -2,9 +2,8 @@
 /**
  * Página de Carta — refactor unificado ES/EU.
  * Mejoras vs. versión anterior:
- *  · Sticky category nav con scroll-spy (subraya la sección activa).
- *  · Filtros chip (sin gluten, vegetariano, sin lactosa) — client-side.
- *    Usan los allergens del menu.json: lo que no contiene el allergen pasa el filtro.
+ *  · Sticky category nav con scroll-spy.
+ *  · Filtros chip: sin gluten, sin lácteos, vegetariano. Client-side.
  *  · Reveal-on-scroll en cada plato.
  *  · Numerales decorativos detrás de los títulos de sección.
  */
@@ -27,16 +26,27 @@ const sections = [
   { id: 'desserts', title: t('menu_page.tabs.desserts'), dishes: desserts, num: '04' },
 ];
 
-// Filtros disponibles. Cada filtro define qué alérgeno NO debe contener.
-type FilterDef = { id: string; label: string; excludeAllergens: Allergen[]; icon: 'wheat-off' | 'leaf' | 'sparkles' };
+// Filtros disponibles.
+//  · Tipo "exclude": el plato pasa si NINGUNO de los allergens listados está presente.
+//  · Tipo "veg": el plato pasa si tiene `vegetarian: true`.
+type FilterDef = {
+  id: string;
+  label: string;
+  icon: 'wheat-off' | 'leaf' | 'sparkles';
+  type: 'exclude' | 'veg';
+  excludeAllergens?: Allergen[];
+};
+
 const filters: FilterDef[] = lang === 'eu'
   ? [
-      { id: 'gluten-free', label: 'Glutenik gabe', excludeAllergens: ['gluten'], icon: 'wheat-off' },
-      { id: 'lactose-free', label: 'Esnerik gabe', excludeAllergens: ['lacteos'], icon: 'sparkles' },
+      { id: 'gluten-free',  label: 'Glutenik gabe', type: 'exclude', excludeAllergens: ['gluten'],  icon: 'wheat-off' },
+      { id: 'lactose-free', label: 'Esnerik gabe',  type: 'exclude', excludeAllergens: ['lacteos'], icon: 'sparkles' },
+      { id: 'vegetarian',   label: 'Begetariano',   type: 'veg',     icon: 'leaf' },
     ]
   : [
-      { id: 'gluten-free', label: 'Sin gluten', excludeAllergens: ['gluten'], icon: 'wheat-off' },
-      { id: 'lactose-free', label: 'Sin lácteos', excludeAllergens: ['lacteos'], icon: 'sparkles' },
+      { id: 'gluten-free',  label: 'Sin gluten',     type: 'exclude', excludeAllergens: ['gluten'],  icon: 'wheat-off' },
+      { id: 'lactose-free', label: 'Sin lácteos',    type: 'exclude', excludeAllergens: ['lacteos'], icon: 'sparkles' },
+      { id: 'vegetarian',   label: 'Vegetariano',    type: 'veg',     icon: 'leaf' },
     ];
 
 const allLabel = lang === 'eu' ? 'Guztiak' : 'Todo';
@@ -45,7 +55,6 @@ const noResultsText = lang === 'eu'
   : 'No hay platos con esos filtros. Pregúntanos si tienes dudas.';
 ---
 
-<!-- Header -->
 <section class="page-header container">
   <div class="section-label" data-reveal>{t('menu_page.label')}</div>
   <h1 class="section-title" data-reveal data-reveal-delay="1">
@@ -56,7 +65,6 @@ const noResultsText = lang === 'eu'
   <p class="menu-hint" data-reveal data-reveal-delay="3">{t('menu_page.click_hint')}</p>
 </section>
 
-<!-- Sticky bar con anchors + filtros -->
 <div class="menu-toolbar" id="menuToolbar">
   <nav class="menu-anchors" id="menuAnchors" aria-label="Categorías">
     {sections.map(s => (
@@ -69,7 +77,13 @@ const noResultsText = lang === 'eu'
       <span>{allLabel}</span>
     </button>
     {filters.map(f => (
-      <button type="button" class="filter-chip" data-filter={f.id} data-exclude={f.excludeAllergens.join(',')}>
+      <button
+        type="button"
+        class="filter-chip"
+        data-filter={f.id}
+        data-type={f.type}
+        data-exclude={(f.excludeAllergens || []).join(',')}
+      >
         <Icon name={f.icon} size={14} />
         <span>{f.label}</span>
       </button>
@@ -90,6 +104,7 @@ const noResultsText = lang === 'eu'
             class="menu-grid-item"
             data-reveal
             data-allergens={(dish.allergens || []).join(',')}
+            data-veg={dish.vegetarian ? 'true' : 'false'}
           >
             <DishCard dish={dish} lang={lang} />
           </div>
@@ -105,9 +120,7 @@ const noResultsText = lang === 'eu'
 </div>
 
 <style>
-  .page-header {
-    padding: 4rem var(--gutter) 1.5rem;
-  }
+  .page-header { padding: 4rem var(--gutter) 1.5rem; }
   .page-intro {
     font-family: var(--font-serif);
     font-size: 1.15rem;
@@ -137,7 +150,6 @@ const noResultsText = lang === 'eu'
     flex-shrink: 0;
   }
 
-  /* Sticky toolbar */
   .menu-toolbar {
     position: sticky;
     top: var(--nav-height);
@@ -154,11 +166,7 @@ const noResultsText = lang === 'eu'
     align-items: center;
     justify-content: space-between;
   }
-  .menu-anchors {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-  }
+  .menu-anchors { display: flex; gap: 0.4rem; flex-wrap: wrap; }
   .menu-anchors a {
     padding: 0.5rem 1rem;
     font-family: var(--font-display);
@@ -168,23 +176,15 @@ const noResultsText = lang === 'eu'
     border: 1px solid var(--line);
     border-radius: 2px;
     transition: all 0.2s ease;
-    position: relative;
   }
   .menu-anchors a:hover,
   .menu-anchors a.is-active {
     color: var(--copper);
     border-color: var(--copper);
   }
-  .menu-anchors a.is-active {
-    background: rgba(200, 116, 58, 0.08);
-  }
+  .menu-anchors a.is-active { background: rgba(200, 116, 58, 0.08); }
 
-  /* Filter chips */
-  .menu-filters {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-  }
+  .menu-filters { display: flex; gap: 0.4rem; flex-wrap: wrap; }
   .filter-chip {
     display: inline-flex;
     align-items: center;
@@ -212,7 +212,6 @@ const noResultsText = lang === 'eu'
     font-weight: 600;
   }
 
-  /* Sections */
   .menu-section {
     padding: 4rem var(--gutter);
     scroll-margin-top: calc(var(--nav-height) + 80px);
@@ -240,16 +239,9 @@ const noResultsText = lang === 'eu'
     grid-template-columns: 1fr 1fr;
     gap: 2rem 4rem;
   }
-  .menu-grid-item {
-    transition: opacity 0.3s ease;
-  }
-  .menu-grid-item.is-hidden {
-    display: none;
-  }
-  /* Sección entera oculta cuando no hay items visibles */
-  .menu-section.is-empty {
-    display: none;
-  }
+  .menu-grid-item { transition: opacity 0.3s ease; }
+  .menu-grid-item.is-hidden { display: none; }
+  .menu-section.is-empty { display: none; }
 
   .menu-note {
     margin-top: 3rem;
@@ -296,25 +288,20 @@ const noResultsText = lang === 'eu'
 </style>
 
 <script>
-  /**
-   * Carta interactiva:
-   *  · Filtros: ocultan platos según data-allergens.
-   *  · Scroll-spy: marca la sección visible en la barra de anchors.
-   */
   function initMenu() {
-    const filterChips = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
-    const items = document.querySelectorAll<HTMLElement>('.menu-grid-item');
-    const sections = document.querySelectorAll<HTMLElement>('.menu-section');
-    const anchors = document.querySelectorAll<HTMLAnchorElement>('[data-anchor]');
+    const filterChips = document.querySelectorAll('[data-filter]');
+    const items = document.querySelectorAll('.menu-grid-item');
+    const sections = document.querySelectorAll('.menu-section');
+    const anchors = document.querySelectorAll('[data-anchor]');
     const empty = document.getElementById('menuEmpty');
 
-    // Filtros
     filterChips.forEach(chip => {
       chip.addEventListener('click', () => {
         filterChips.forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
 
         const filter = chip.dataset.filter || 'all';
+        const type = chip.dataset.type || '';
         const exclude = (chip.dataset.exclude || '').split(',').filter(Boolean);
 
         items.forEach(item => {
@@ -322,13 +309,17 @@ const noResultsText = lang === 'eu'
             item.classList.remove('is-hidden');
             return;
           }
-          const allergens = (item.dataset.allergens || '').split(',').filter(Boolean);
-          // El plato se muestra si NINGUNO de los excluidos está en sus allergens
-          const conflicts = exclude.some(ex => allergens.includes(ex));
-          item.classList.toggle('is-hidden', conflicts);
+
+          let hide = false;
+          if (type === 'exclude') {
+            const allergens = (item.dataset.allergens || '').split(',').filter(Boolean);
+            hide = exclude.some(ex => allergens.includes(ex));
+          } else if (type === 'veg') {
+            hide = item.dataset.veg !== 'true';
+          }
+          item.classList.toggle('is-hidden', hide);
         });
 
-        // Ocultar sección si todos sus items están ocultos
         let anyVisible = false;
         sections.forEach(section => {
           const visible = section.querySelectorAll('.menu-grid-item:not(.is-hidden)').length;
@@ -340,7 +331,6 @@ const noResultsText = lang === 'eu'
       });
     });
 
-    // Scroll-spy
     if ('IntersectionObserver' in window) {
       const spy = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
