@@ -4,6 +4,8 @@ import Nav from '@components/Nav.astro';
 import Footer from '@components/Footer.astro';
 import WhatsAppFloat from '@components/WhatsAppFloat.astro';
 import CookieConsent from '@components/CookieConsent.astro';
+import { ViewTransitions } from 'astro:transitions';
+import { restaurant } from '@content/restaurant';
 import '@/styles/tokens.css';
 
 interface Props {
@@ -32,6 +34,48 @@ const tail = currentPath === '/' ? '' : currentPath;
 const urlEs = `${siteOrigin}/es${tail}`;
 const urlEu = `${siteOrigin}/eu${tail}`;
 const canonical = lang === 'es' ? urlEs : urlEu;
+
+// ============================================
+// JSON-LD Schema.org Restaurant + LocalBusiness
+// Habilita rich-results en Google (horarios, mapa, teléfono, valoración).
+// Solo se imprime una vez por página.
+// ============================================
+const dayMap: Record<string, string> = {
+  mon: 'Mo', tue: 'Tu', wed: 'We', thu: 'Th', fri: 'Fr', sat: 'Sa', sun: 'Su',
+};
+const openingHours = restaurant.hours
+  .filter(h => !h.closed && h.open && h.close)
+  .map(h => `${dayMap[h.day]} ${h.open}-${h.close}`);
+
+const restaurantSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Restaurant',
+  '@id': `${siteOrigin}#restaurant`,
+  name: restaurant.name,
+  description,
+  url: siteOrigin || canonical,
+  telephone: restaurant.phone,
+  email: restaurant.email,
+  servesCuisine: ['Burgers', 'Tapas', 'Bistro', 'Local'],
+  priceRange: '€€',
+  image: `${siteOrigin}/og-image.jpg`,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: restaurant.address.street,
+    addressLocality: restaurant.address.city,
+    addressRegion: restaurant.address.province,
+    postalCode: restaurant.address.postalCode,
+    addressCountry: restaurant.address.country,
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: restaurant.address.lat,
+    longitude: restaurant.address.lng,
+  },
+  openingHours,
+  sameAs: [restaurant.social.instagram].filter(Boolean),
+  acceptsReservations: 'True',
+};
 ---
 
 <!DOCTYPE html>
@@ -39,6 +83,7 @@ const canonical = lang === 'es' ? urlEs : urlEu;
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#161310">
   <title>{fullTitle}</title>
   <meta name="description" content={description}>
   <meta name="generator" content={Astro.generator}>
@@ -48,6 +93,12 @@ const canonical = lang === 'es' ? urlEs : urlEu;
   <meta property="og:description" content={description}>
   <meta property="og:type" content="restaurant.restaurant">
   <meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'eu_ES'}>
+  <meta property="og:url" content={canonical}>
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={fullTitle}>
+  <meta name="twitter:description" content={description}>
 
   <!-- Tipografías: carga asíncrona para no bloquear el render.
        Truco: media="print" hace que el navegador no bloquee el render
@@ -77,16 +128,24 @@ const canonical = lang === 'es' ? urlEs : urlEu;
   <link rel="alternate" hreflang="es" href={urlEs}>
   <link rel="alternate" hreflang="eu" href={urlEu}>
   <link rel="alternate" hreflang="x-default" href={urlEs}>
+
+  <!-- JSON-LD Restaurant Schema (rich results en Google) -->
+  <script type="application/ld+json" set:html={JSON.stringify(restaurantSchema)} />
+
+  <!-- ViewTransitions: navegación SPA-like con persistencia de scroll -->
+  <ViewTransitions />
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Saltar al contenido</a>
+
   <Nav lang={lang} currentPath={currentPath} />
 
-  <main>
+  <main id="main-content">
     <slot />
   </main>
 
   <Footer lang={lang} />
-  <WhatsAppFloat />
+  <WhatsAppFloat lang={lang} />
   <CookieConsent lang={lang} />
 
   <div class="demo-banner">{t('footer.demo_notice')}</div>
@@ -97,5 +156,38 @@ const canonical = lang === 'es' ? urlEs : urlEu;
       min-height: calc(100vh - var(--nav-height));
     }
   </style>
+
+  <!-- ============================================
+       Reveal-on-scroll global con IntersectionObserver.
+       Honra prefers-reduced-motion automáticamente.
+       Re-ejecuta tras navegación con ViewTransitions.
+       ============================================ -->
+  <script>
+    function initReveal() {
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const targets = document.querySelectorAll<HTMLElement>('[data-reveal], .split-word');
+
+      if (reduced || !('IntersectionObserver' in window)) {
+        targets.forEach(el => el.classList.add('is-visible'));
+        return;
+      }
+
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.1 });
+
+      targets.forEach(el => {
+        if (!el.classList.contains('is-visible')) io.observe(el);
+      });
+    }
+
+    // Init en carga inicial y tras cada View Transition
+    document.addEventListener('astro:page-load', initReveal);
+  </script>
 </body>
 </html>

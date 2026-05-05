@@ -1,0 +1,245 @@
+---
+/**
+ * Hero principal con split-text reveal, ken-burns sutil en el bg y
+ * trust signals (estrellas Google) bajo los CTAs.
+ */
+import { useTranslations, type Lang, localizedPath } from '@i18n/index';
+import TrustStars from '@components/TrustStars.astro';
+import Icon from '@components/Icon.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Rutas distintas por idioma (Astro no infiere, mejor explícito)
+const reserveHref = lang === 'eu' ? '/eu/erreserbak' : '/es/reservas';
+const menuHref = lang === 'eu' ? '/eu/karta' : '/es/carta';
+
+// Split-text: tagline en palabras para reveal escalonado
+const taglineWords = t('home.hero.tagline').split(' ');
+---
+
+<header class="hero">
+  <div class="hero-bg img-slot" data-slot="HERO · Foto del local de noche, barra iluminada (horizontal)"></div>
+  <div class="hero-content container">
+    <div class="hero-since" data-reveal>{t('home.hero.since')}</div>
+
+    <h1 class="hero-title">
+      <span class="hero-line" data-reveal data-reveal-delay="1">ERREKA</span>
+      <span class="hero-line highlight" data-reveal data-reveal-delay="2">MEET POINT</span>
+    </h1>
+
+    <p class="hero-tagline" data-reveal data-reveal-delay="3">
+      {taglineWords.map((w, i) => (
+        <>
+          <span class="split-word" style={`transition-delay:${0.4 + i * 0.04}s;`}>{w}</span>
+          {i < taglineWords.length - 1 && ' '}
+        </>
+      ))}
+    </p>
+
+    <div class="hero-actions" data-reveal data-reveal-delay="4">
+      <a href={reserveHref} class="btn btn-primary btn-magnetic" data-magnetic>
+        {t('home.hero.cta_reserve')}
+      </a>
+      <a href={menuHref} class="btn btn-secondary btn-with-icon">
+        {t('home.hero.cta_menu')}
+        <Icon name="arrow-down" size={16} />
+      </a>
+    </div>
+
+    <div class="hero-trust" data-reveal data-reveal-delay="5">
+      <TrustStars rating={4.7} reviews={320} source="Google" />
+    </div>
+  </div>
+
+  <button class="hero-scroll" type="button" aria-label="Scroll" data-scroll-down>
+    <span></span>
+  </button>
+</header>
+
+<style>
+  .hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 4rem 0;
+    overflow: hidden;
+    margin-top: calc(var(--nav-height) * -1);
+    padding-top: var(--nav-height);
+  }
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    /* Ken-burns sutil (zoom + drift). Se desactiva con reduced-motion. */
+    animation: kenburns 28s ease-out infinite alternate;
+    will-change: transform;
+  }
+  .hero-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+      rgba(22, 19, 16, 0.6) 0%,
+      rgba(22, 19, 16, 0.78) 50%,
+      rgba(22, 19, 16, 1) 100%);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+  }
+  .hero-since {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--copper);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .hero-since::before {
+    content: "";
+    width: 40px;
+    height: 1px;
+    background: var(--copper);
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(3.5rem, 12vw, 9rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    color: var(--cream);
+  }
+  .hero-line {
+    display: block;
+  }
+  .hero-title .highlight { color: var(--copper); }
+
+  .hero-tagline {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    color: var(--cream-soft);
+    max-width: 540px;
+    margin: 1.5rem 0 2.5rem;
+    font-weight: 300;
+    overflow: hidden;
+  }
+  .hero-tagline .split-word {
+    display: inline-block;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+  }
+  .btn-with-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .hero-trust {
+    margin-top: 0.5rem;
+  }
+
+  /* Indicador de scroll */
+  .hero-scroll {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: none;
+    border: none;
+    width: 26px;
+    height: 44px;
+    border-radius: 13px;
+    border: 1px solid var(--line-strong);
+    z-index: 3;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+  .hero-scroll:hover { border-color: var(--copper); }
+  .hero-scroll span {
+    display: block;
+    width: 2px;
+    height: 8px;
+    background: var(--copper);
+    margin: 6px auto;
+    border-radius: 1px;
+    animation: scroll-hint 1.8s ease-in-out infinite;
+  }
+
+  /* Animaciones */
+  @keyframes kenburns {
+    from { transform: scale(1) translate(0, 0); }
+    to   { transform: scale(1.08) translate(-1.5%, 1%); }
+  }
+  @keyframes scroll-hint {
+    0%, 100% { transform: translateY(0); opacity: 0.4; }
+    50%      { transform: translateY(14px); opacity: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-bg { animation: none; }
+    .hero-scroll span { animation: none; }
+  }
+
+  @media (max-width: 600px) {
+    .hero-scroll { display: none; }
+  }
+</style>
+
+<script>
+  /**
+   * Magnetic CTA: el botón data-magnetic atrae sutilmente el cursor.
+   * Solo en pointer fino (escritorio). No en touch.
+   * Y siempre desactivado con prefers-reduced-motion.
+   */
+  function initMagnetic() {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fine = window.matchMedia('(pointer: fine)').matches;
+    if (reduced || !fine) return;
+
+    document.querySelectorAll<HTMLElement>('[data-magnetic]').forEach(btn => {
+      const onMove = (e: MouseEvent) => {
+        const r = btn.getBoundingClientRect();
+        const x = e.clientX - r.left - r.width / 2;
+        const y = e.clientY - r.top - r.height / 2;
+        const max = 8; // px
+        const dx = Math.max(-max, Math.min(max, x * 0.18));
+        const dy = Math.max(-max, Math.min(max, y * 0.18));
+        btn.style.transform = `translate(${dx}px, ${dy}px)`;
+      };
+      const reset = () => { btn.style.transform = ''; };
+      btn.addEventListener('mousemove', onMove);
+      btn.addEventListener('mouseleave', reset);
+    });
+  }
+
+  function initScrollDown() {
+    document.querySelectorAll<HTMLElement>('[data-scroll-down]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const next = btn.closest('.hero')?.nextElementSibling as HTMLElement | null;
+        if (next) {
+          next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    initMagnetic();
+    initScrollDown();
+  });
+</script>

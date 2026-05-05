@@ -1,216 +1,27 @@
 ---
 import Base from '@layouts/Base.astro';
+import Hero from '@components/Hero.astro';
+import AboutSection from '@components/AboutSection.astro';
+import HighlightsSection from '@components/HighlightsSection.astro';
 import FridayMenu from '@components/FridayMenu.astro';
-import DishCard from '@components/DishCard.astro';
 import DishModal from '@components/DishModal.astro';
-import { useTranslations, localizedPath } from '@i18n/index';
-import { getHighlights, getDishName } from '@content/menu';
-import { restaurant } from '@content/restaurant';
+import SectionDivider from '@components/SectionDivider.astro';
 
 const lang = 'es' as const;
-const t = useTranslations(lang);
-const highlights = getHighlights().slice(0, 6);
 ---
 
 <Base lang={lang} currentPath="/">
+  <Hero lang={lang} />
 
-  <!-- HERO -->
-  <header class="hero">
-    <div class="hero-bg img-slot" data-slot="HERO · Foto del local de noche, barra iluminada (horizontal, alta resolución)"></div>
-    <div class="hero-content container">
-      <div class="hero-since">{t('home.hero.since')}</div>
-      <h1 class="hero-title">
-        ERREKA<br>
-        <span class="highlight">MEET POINT</span>
-      </h1>
-      <p class="hero-tagline">{t('home.hero.tagline')}</p>
-      <div class="hero-actions">
-        <a href={localizedPath(lang, '/reservas')} class="btn btn-primary">
-          {t('home.hero.cta_reserve')}
-        </a>
-        <a href={localizedPath(lang, '/carta')} class="btn btn-secondary">
-          {t('home.hero.cta_menu')}
-        </a>
-      </div>
-    </div>
-  </header>
+  <SectionDivider variant="line" />
 
-  <!-- ABOUT -->
-  <section class="about-section container">
-    <div class="section-label">{t('home.about.label')}</div>
-    <div class="about">
-      <div class="about-text">
-        <h2 class="section-title">
-          {t('home.about.title_line1')}<br>
-          {t('home.about.title_line2')}
-        </h2>
-        <p>{t('home.about.p1')}</p>
-        <p>{t('home.about.p2')}</p>
-        <p>{t('home.about.p3')}</p>
-      </div>
-      <div class="about-img img-slot" data-slot="AMBIENTE · Foto vertical del interior con gente, barra o mesas"></div>
-    </div>
-  </section>
+  <AboutSection lang={lang} />
 
-  <!-- MENÚ DEL VIERNES -->
   <FridayMenu lang={lang} />
 
-  <!-- DESTACADOS -->
-  <section class="highlights-section container">
-    <div class="section-label">{t('home.highlights.label')}</div>
-    <h2 class="section-title">{t('home.highlights.title')}</h2>
+  <SectionDivider variant="brush" />
 
-    <div class="highlights-grid">
-      {highlights.map(dish => (
-        <div class="highlight-card">
-          <div class="highlight-img img-slot" data-slot={`Foto · ${getDishName(dish, lang)}`}></div>
-          <DishCard dish={dish} lang={lang} />
-        </div>
-      ))}
-    </div>
-
-    <div class="highlights-cta">
-      <a href={localizedPath(lang, '/carta')} class="btn btn-secondary">
-        {t('home.highlights.see_full_menu')} →
-      </a>
-    </div>
-  </section>
+  <HighlightsSection lang={lang} />
 
   <DishModal lang={lang} />
-
 </Base>
-
-<style>
-  /* HERO */
-  .hero {
-    min-height: 100vh;
-    position: relative;
-    display: flex;
-    align-items: center;
-    padding: 4rem 0;
-    overflow: hidden;
-    margin-top: calc(var(--nav-height) * -1);
-    padding-top: var(--nav-height);
-  }
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-  }
-  .hero-bg::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg,
-      rgba(22, 19, 16, 0.7) 0%,
-      rgba(22, 19, 16, 0.85) 50%,
-      rgba(22, 19, 16, 1) 100%);
-  }
-  .hero-content {
-    position: relative;
-    z-index: 2;
-    width: 100%;
-  }
-  .hero-since {
-    font-family: var(--font-body);
-    font-size: 0.75rem;
-    letter-spacing: 0.4em;
-    text-transform: uppercase;
-    color: var(--copper);
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-  .hero-since::before {
-    content: "";
-    width: 40px;
-    height: 1px;
-    background: var(--copper);
-  }
-  .hero-title {
-    font-family: var(--font-display);
-    font-size: clamp(3.5rem, 12vw, 9rem);
-    line-height: 0.9;
-    letter-spacing: 0.02em;
-    color: var(--cream);
-  }
-  .hero-title .highlight { color: var(--copper); }
-  .hero-tagline {
-    font-family: var(--font-serif);
-    font-style: italic;
-    font-size: clamp(1.1rem, 2vw, 1.4rem);
-    color: var(--cream-soft);
-    max-width: 540px;
-    margin: 1.5rem 0 2.5rem;
-    font-weight: 300;
-  }
-  .hero-actions {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  /* ABOUT */
-  .about-section { padding: 6rem 2rem; }
-  .about {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-  }
-  .about-text p {
-    font-family: var(--font-serif);
-    font-size: 1.15rem;
-    line-height: 1.8;
-    color: var(--cream-soft);
-    margin-bottom: 1.5rem;
-    font-weight: 300;
-  }
-  .about-text p:first-of-type::first-letter {
-    font-family: var(--font-display);
-    font-size: 4rem;
-    float: left;
-    line-height: 0.9;
-    padding: 0.3rem 0.5rem 0 0;
-    color: var(--copper);
-  }
-  .about-img {
-    aspect-ratio: 4/5;
-    border-radius: 2px;
-  }
-
-  /* HIGHLIGHTS */
-  .highlights-section {
-    padding: 6rem 2rem;
-  }
-  .highlights-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    margin-bottom: 3rem;
-  }
-  .highlight-card {
-    background: var(--bg-card);
-    padding: 1.25rem;
-    border: 1px solid var(--line);
-    transition: transform 0.3s ease, border-color 0.3s ease;
-  }
-  .highlight-card:hover {
-    transform: translateY(-4px);
-    border-color: var(--copper);
-  }
-  .highlight-img {
-    aspect-ratio: 4/3;
-    margin-bottom: 1.25rem;
-  }
-  .highlights-cta {
-    text-align: center;
-    margin-top: 2rem;
-  }
-
-  @media (max-width: 768px) {
-    .about { grid-template-columns: 1fr; gap: 2rem; }
-    .about-section, .highlights-section { padding: 4rem 1.25rem; }
-  }
-</style>

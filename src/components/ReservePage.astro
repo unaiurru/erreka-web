@@ -1,0 +1,448 @@
+---
+/**
+ * Página de reservas — refactor unificado ES/EU.
+ * Mejoras vs. versión anterior:
+ *  · People-pills (chips) en vez de <select>: tap-friendly, 100% accesible.
+ *  · Time grid visual con dos secciones (Comida / Cena).
+ *  · Reveal-on-scroll y polish visual.
+ *  · Mantiene el honeypot anti-bot existente.
+ */
+import { useTranslations, useArray, type Lang } from '@i18n/index';
+import { restaurant } from '@content/restaurant';
+import Icon from '@components/Icon.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const arr = useArray(lang);
+const policyItems = arr('reserve_page.policy.items');
+
+const lunchTimes = ['13:30', '14:00', '14:30', '15:00'];
+const dinnerTimes = ['20:30', '21:00', '21:30', '22:00'];
+
+const labels = {
+  es: { lunch: 'Comida', dinner: 'Cena', people: 'Personas', plus: '8+' },
+  eu: { lunch: 'Bazkaria', dinner: 'Afaria', people: 'Lagun', plus: '8+' },
+}[lang];
+
+const groupCallText = lang === 'eu'
+  ? '8 lagunetik gora? Deitu zuzenean'
+  : '¿Más de 8 personas? Llámanos directamente';
+---
+
+<section class="reserve-page container-narrow">
+  <div class="reserve-header" data-reveal>
+    <div class="section-label centered">{t('reserve_page.label')}</div>
+    <h1 class="section-title">{t('reserve_page.title')}</h1>
+    <p class="reserve-intro">
+      {t('reserve_page.intro')}
+      <a href={`tel:${restaurant.phone}`} class="phone-link">
+        {restaurant.phoneDisplay}
+      </a>.
+    </p>
+  </div>
+
+  <form
+    class="reserve-widget"
+    id="reserveForm"
+    novalidate
+    autocomplete="off"
+    data-reveal
+    data-reveal-delay="1"
+  >
+    <span class="reserve-widget-note">{t('reserve_page.widget_note')}</span>
+
+    <!--
+      Anti-bot: honeypot + token temporal (preservado de la versión anterior).
+      · `website` invisible para humanos pero visible para bots.
+      · `_t` guarda el timestamp de carga; si <1500ms, asumimos bot.
+    -->
+    <div class="hp-field" aria-hidden="true">
+      <label>Website (no rellenar)</label>
+      <input type="text" name="website" tabindex="-1" autocomplete="off">
+    </div>
+    <input type="hidden" name="_t" value="">
+
+    <!-- People pills -->
+    <fieldset class="rf-section">
+      <legend>
+        <Icon name="users" size={16} />
+        <span>{labels.people}</span>
+      </legend>
+      <div class="people-pills" role="radiogroup">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
+          <label class="pill">
+            <input type="radio" name="people" value={n} checked={n === 2} required />
+            <span>{n}</span>
+          </label>
+        ))}
+        <a href={`tel:${restaurant.phone}`} class="pill pill--phone" title={groupCallText}>
+          <span>{labels.plus}</span>
+          <Icon name="phone" size={14} />
+        </a>
+      </div>
+    </fieldset>
+
+    <!-- Date + time -->
+    <fieldset class="rf-section">
+      <legend>
+        <Icon name="calendar" size={16} />
+        <span>{t('reserve_page.form.date')}</span>
+      </legend>
+      <input id="rf-date" name="date" type="date" required class="rf-input rf-date" />
+    </fieldset>
+
+    <fieldset class="rf-section">
+      <legend>
+        <Icon name="clock" size={16} />
+        <span>{t('reserve_page.form.time')}</span>
+      </legend>
+      <div class="time-grid" role="radiogroup">
+        <div class="time-block">
+          <span class="time-block-title">{labels.lunch}</span>
+          <div class="time-options">
+            {lunchTimes.map(time => (
+              <label class="time-pill">
+                <input type="radio" name="time" value={time} required />
+                <span>{time}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+        <div class="time-block">
+          <span class="time-block-title">{labels.dinner}</span>
+          <div class="time-options">
+            {dinnerTimes.map(time => (
+              <label class="time-pill">
+                <input type="radio" name="time" value={time} required />
+                <span>{time}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      </div>
+    </fieldset>
+
+    <button class="btn btn-primary reserve-submit btn-magnetic" type="submit" id="reserveBtn" data-magnetic>
+      {t('reserve_page.form.submit')}
+    </button>
+  </form>
+
+  <div class="reserve-policy" data-reveal>
+    <h2>{t('reserve_page.policy.title')}</h2>
+    <ul>
+      {policyItems.map(item => <li>{item}</li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .reserve-page {
+    padding: 5rem var(--gutter) 5rem;
+    text-align: center;
+  }
+  .reserve-header {
+    margin-bottom: 3rem;
+  }
+  .reserve-intro {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    color: var(--cream-soft);
+    font-weight: 300;
+    max-width: 540px;
+    margin: 0 auto 2rem;
+  }
+  .phone-link {
+    color: var(--copper-bright);
+    border-bottom: 1px solid var(--copper-bright);
+    transition: color 0.2s ease;
+  }
+  .phone-link:hover { color: var(--cream); border-bottom-color: var(--cream); }
+
+  /* Form widget */
+  .reserve-widget {
+    background: var(--bg-card);
+    border: 1px solid var(--line);
+    padding: 3rem 2rem;
+    border-radius: 4px;
+    position: relative;
+    margin-bottom: 4rem;
+    text-align: left;
+  }
+  .reserve-widget-note {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    font-family: var(--font-body);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--copper);
+    opacity: 0.6;
+    background: var(--bg);
+    padding: 0.3rem 0.6rem;
+    border-radius: 2px;
+  }
+
+  .rf-section {
+    border: none;
+    padding: 0;
+    margin: 0 0 1.75rem;
+  }
+  .rf-section legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--copper);
+    margin-bottom: 0.85rem;
+    padding: 0;
+  }
+
+  /* People pills */
+  .people-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .pill {
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+  }
+  .pill input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .pill > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    height: 44px;
+    padding: 0 0.75rem;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--bg);
+    color: var(--cream-soft);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  .pill:hover > span {
+    border-color: var(--copper);
+    color: var(--cream);
+  }
+  .pill input:checked + span {
+    background: var(--copper);
+    color: var(--bg);
+    border-color: var(--copper);
+  }
+  .pill input:focus-visible + span {
+    outline: 2px solid var(--copper);
+    outline-offset: 2px;
+  }
+  .pill--phone {
+    display: inline-flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 0.85rem;
+    border: 1px dashed var(--copper);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--copper);
+    font-size: 0.85rem;
+    gap: 0.4rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  .pill--phone:hover {
+    background: var(--copper);
+    color: var(--bg);
+  }
+
+  /* Date input */
+  .rf-input {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    color: var(--cream);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    border-radius: 2px;
+    color-scheme: dark;
+  }
+  .rf-input:focus {
+    outline: 2px solid var(--copper);
+    outline-offset: 2px;
+    border-color: var(--copper);
+  }
+
+  /* Time grid */
+  .time-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  .time-block-title {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cream-mute);
+    margin-bottom: 0.65rem;
+  }
+  .time-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .time-pill {
+    position: relative;
+    cursor: pointer;
+  }
+  .time-pill input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .time-pill > span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 64px;
+    height: 38px;
+    padding: 0 0.65rem;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--bg);
+    color: var(--cream-soft);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+    transition: all 0.2s ease;
+  }
+  .time-pill:hover > span {
+    border-color: var(--copper);
+    color: var(--cream);
+  }
+  .time-pill input:checked + span {
+    background: var(--copper);
+    color: var(--bg);
+    border-color: var(--copper);
+    font-weight: 600;
+  }
+  .time-pill input:focus-visible + span {
+    outline: 2px solid var(--copper);
+    outline-offset: 2px;
+  }
+
+  .reserve-submit {
+    width: 100%;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    padding: 1.15rem 2rem;
+  }
+
+  /* Honeypot */
+  .hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Policy */
+  .reserve-policy {
+    text-align: left;
+    border-top: 1px solid var(--line);
+    padding-top: 3rem;
+  }
+  .reserve-policy h2 {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    letter-spacing: 0.15em;
+    color: var(--copper);
+    margin-bottom: 1.5rem;
+  }
+  .reserve-policy ul {
+    list-style: none;
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--cream-soft);
+    font-weight: 300;
+  }
+  .reserve-policy li {
+    padding: 0.5rem 0 0.5rem 1.5rem;
+    position: relative;
+  }
+  .reserve-policy li::before {
+    content: "—";
+    color: var(--copper);
+    position: absolute;
+    left: 0;
+  }
+
+  @media (max-width: 600px) {
+    .reserve-widget { padding: 2rem 1.25rem; }
+    .time-grid { grid-template-columns: 1fr; gap: 1.25rem; }
+    .reserve-page { padding: 3rem 1.25rem; }
+  }
+</style>
+
+<script>
+  /**
+   * Validación cliente (demo). Mantiene el honeypot anti-bot existente.
+   */
+  function initReserve() {
+    const form = document.getElementById('reserveForm') as HTMLFormElement | null;
+    if (!form) return;
+
+    const tField = form.querySelector<HTMLInputElement>('input[name="_t"]');
+    if (tField) tField.value = String(Date.now());
+
+    // Min date = hoy
+    const dateInput = form.querySelector<HTMLInputElement>('input[name="date"]');
+    if (dateInput) {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      dateInput.min = `${yyyy}-${mm}-${dd}`;
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const data = new FormData(form);
+      const honeypot = (data.get('website') || '').toString();
+      const t0 = parseInt(((data.get('_t') || '0').toString()), 10);
+      const elapsed = Date.now() - (Number.isFinite(t0) ? t0 : 0);
+
+      if (honeypot.trim().length > 0 || elapsed < 1500) {
+        console.warn('reservas: envío descartado por heurística anti-bot');
+        return;
+      }
+
+      if (!form.reportValidity()) return;
+
+      alert('Demo · En la web real esto abriría TheFork con la reserva pre-rellenada.');
+    });
+  }
+
+  document.addEventListener('astro:page-load', initReserve);
+</script>

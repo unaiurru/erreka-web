@@ -1,0 +1,102 @@
+---
+/**
+ * Divisor SVG ondulado entre secciones.
+ * Sustituye los `border-top` rectos por una transición orgánica.
+ *
+ * Variantes:
+ *   - `wave`     onda suave (default)
+ *   - `brush`    pincelada irregular tipo manual
+ *   - `line`     línea fina copper con dot central (sutil)
+ *
+ * El componente es decorativo (aria-hidden).
+ */
+
+interface Props {
+  variant?: 'wave' | 'brush' | 'line';
+  flip?: boolean;
+  color?: string; // CSS var o hex; por defecto usa --bg-soft
+  bgColor?: string; // color del fondo encima/debajo (para fundir)
+}
+
+const {
+  variant = 'wave',
+  flip = false,
+  color = 'var(--bg-soft)',
+  bgColor = 'transparent',
+} = Astro.props;
+---
+
+<div
+  class:list={['divider', `divider--${variant}`, { 'is-flipped': flip }]}
+  style={`--divider-color: ${color}; --divider-bg: ${bgColor};`}
+  aria-hidden="true"
+>
+  {variant === 'wave' && (
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+      <path d="M0,40 C240,80 480,0 720,40 C960,80 1200,0 1440,40 L1440,80 L0,80 Z" fill="var(--divider-color)"/>
+    </svg>
+  )}
+
+  {variant === 'brush' && (
+    <svg viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path
+        d="M0,30 C200,15 320,45 520,30 C720,15 880,42 1080,28 C1240,18 1340,38 1440,30"
+        stroke="var(--copper)"
+        stroke-width="1"
+        fill="none"
+        opacity="0.4"
+        stroke-linecap="round"
+      />
+    </svg>
+  )}
+
+  {variant === 'line' && (
+    <div class="divider-line">
+      <span></span>
+      <i></i>
+      <span></span>
+    </div>
+  )}
+</div>
+
+<style>
+  .divider {
+    width: 100%;
+    line-height: 0;
+    background: var(--divider-bg);
+    pointer-events: none;
+    position: relative;
+    z-index: 2;
+  }
+  .divider svg {
+    width: 100%;
+    display: block;
+  }
+  .divider--wave svg { height: 60px; }
+  .divider--brush svg { height: 40px; }
+  .divider.is-flipped svg { transform: scaleY(-1); }
+
+  /* Variante línea sutil con dot copper */
+  .divider-line {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    padding: 2rem var(--gutter);
+    max-width: var(--container-max);
+    margin: 0 auto;
+  }
+  .divider-line span {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .divider-line i {
+    width: 6px;
+    height: 6px;
+    background: var(--copper);
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 4px rgba(200, 116, 58, 0.15);
+  }
+</style>

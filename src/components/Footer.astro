@@ -1,6 +1,8 @@
 ---
 import { useTranslations, type Lang } from '@i18n/index';
 import { restaurant } from '@content/restaurant';
+import Icon from '@components/Icon.astro';
+import OpenStatus from '@components/OpenStatus.astro';
 
 interface Props {
   lang: Lang;
@@ -22,13 +24,78 @@ const legalRoutes = {
     cookies: '/eu/cookieak',
   },
 }[lang];
+
+// Etiquetas días por idioma
+const dayKeys = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'] as const;
+const dayLabels = lang === 'eu'
+  ? { mon: 'Astel.', tue: 'Astear.', wed: 'Asteaz.', thu: 'Osteg.', fri: 'Ostir.', sat: 'Larun.', sun: 'Iga.' }
+  : { mon: 'Lun', tue: 'Mar', wed: 'Mié', thu: 'Jue', fri: 'Vie', sat: 'Sáb', sun: 'Dom' };
+
+const closedLabel = t('contact_page.closed');
+const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(restaurant.address.street + ', ' + restaurant.address.city)}`;
 ---
 
 <footer>
-  <div class="footer-inner">
-    <div class="footer-logo">{restaurant.shortName.toUpperCase()} <span>·</span> MEET POINT</div>
-    <p class="footer-tag">{t('footer.tag')}</p>
+  <!-- Strip superior: marca + contacto rápido -->
+  <div class="footer-top container" data-reveal>
+    <div class="footer-brand">
+      <div class="footer-logo">{restaurant.shortName.toUpperCase()} <span>·</span> MEET POINT</div>
+      <p class="footer-tag">{t('footer.tag')}</p>
+      <OpenStatus lang={lang} size="md" />
+    </div>
 
+    <div class="footer-cols">
+      <div class="footer-col">
+        <h3>{t('contact_page.where')}</h3>
+        <a href={mapsUrl} target="_blank" rel="noopener" class="footer-line">
+          <Icon name="map-pin" size={18} />
+          <span>
+            {restaurant.address.street}<br>
+            {restaurant.address.postalCode} {restaurant.address.city} · {restaurant.address.province}
+          </span>
+        </a>
+      </div>
+
+      <div class="footer-col">
+        <h3>{t('contact_page.contact')}</h3>
+        <a href={`tel:${restaurant.phone}`} class="footer-line">
+          <Icon name="phone" size={18} />
+          <span>{restaurant.phoneDisplay}</span>
+        </a>
+        <a href={`mailto:${restaurant.email}`} class="footer-line">
+          <Icon name="mail" size={18} />
+          <span>{restaurant.email}</span>
+        </a>
+        {restaurant.social.instagram && (
+          <a href={restaurant.social.instagram} target="_blank" rel="noopener" class="footer-line">
+            <Icon name="instagram" size={18} />
+            <span>@errekameetpoint</span>
+          </a>
+        )}
+      </div>
+
+      <div class="footer-col">
+        <h3>{t('contact_page.hours')}</h3>
+        <ul class="hours-list">
+          {dayKeys.map(d => {
+            const entry = restaurant.hours.find(h => h.day === d);
+            const closed = !entry || entry.closed;
+            return (
+              <li>
+                <span class="day">{dayLabels[d]}</span>
+                <span class="time">
+                  {closed ? closedLabel : `${entry?.open}–${entry?.close}`}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Strip inferior: legal + copyright -->
+  <div class="footer-bottom">
     <nav class="footer-legal" aria-label={t('footer.legal_nav')}>
       <a href={legalRoutes.aviso}>{t('footer.aviso_legal')}</a>
       <span class="sep">·</span>
@@ -50,20 +117,30 @@ const legalRoutes = {
 <style>
   footer {
     background: var(--bg-deep);
-    padding: 3rem var(--gutter) 4rem;
-    text-align: center;
     border-top: 1px solid var(--line);
+    position: relative;
+    z-index: 2;
   }
-  .footer-inner {
-    max-width: var(--container-max);
-    margin: 0 auto;
+
+  .footer-top {
+    padding: 4rem var(--gutter) 3rem;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: flex-start;
   }
   .footer-logo {
     font-family: var(--font-display);
     font-size: 2rem;
     letter-spacing: 0.1em;
     color: var(--cream);
-    margin-bottom: 0.5rem;
   }
   .footer-logo span { color: var(--copper); }
   .footer-tag {
@@ -71,11 +148,74 @@ const legalRoutes = {
     font-style: italic;
     color: var(--cream-soft);
     font-size: 0.95rem;
-    margin-bottom: 1.5rem;
   }
 
+  .footer-cols {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+  .footer-col h3 {
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--copper);
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  .footer-line {
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-start;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--cream-soft);
+    line-height: 1.55;
+    padding: 0.35rem 0;
+    transition: color 0.2s ease;
+  }
+  .footer-line :global(.icon) {
+    color: var(--copper);
+    margin-top: 0.15rem;
+  }
+  .footer-line:hover { color: var(--cream); }
+
+  .hours-list {
+    list-style: none;
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    color: var(--cream-soft);
+  }
+  .hours-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.3rem 0;
+    border-bottom: 1px dashed rgba(244, 234, 216, 0.06);
+    gap: 1rem;
+  }
+  .hours-list li:last-child { border: none; }
+  .hours-list .day {
+    color: var(--cream-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.7rem;
+    align-self: center;
+  }
+  .hours-list .time {
+    font-variant-numeric: tabular-nums;
+    color: var(--cream);
+  }
+
+  /* Bottom */
+  .footer-bottom {
+    border-top: 1px solid var(--line);
+    padding: 1.5rem var(--gutter);
+    text-align: center;
+    max-width: var(--container-max);
+    margin: 0 auto;
+  }
   .footer-legal {
-    margin: 1.5rem auto 0;
     font-family: var(--font-body);
     font-size: 0.75rem;
     letter-spacing: 0.1em;
@@ -86,7 +226,7 @@ const legalRoutes = {
     gap: 0.4rem 0.75rem;
     justify-content: center;
     align-items: center;
-    max-width: 720px;
+    margin-bottom: 1rem;
   }
   .footer-legal a,
   .footer-legal .footer-link-btn {
@@ -111,16 +251,24 @@ const legalRoutes = {
     text-transform: inherit;
     cursor: pointer;
   }
-
   .footer-meta {
     font-family: var(--font-body);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     letter-spacing: 0.1em;
     color: var(--cream-mute);
     text-transform: uppercase;
-    margin-top: 1.5rem;
   }
 
+  @media (max-width: 900px) {
+    .footer-top {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+    .footer-cols {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
   @media (max-width: 600px) {
     .footer-legal .sep { display: none; }
     .footer-legal { flex-direction: column; gap: 0.5rem; }
@@ -128,7 +276,10 @@ const legalRoutes = {
 </style>
 
 <script>
-  document.getElementById('footerCookieConfig')?.addEventListener('click', () => {
-    window.dispatchEvent(new CustomEvent('cookie-consent:open'));
-  });
+  function initFooter() {
+    document.getElementById('footerCookieConfig')?.addEventListener('click', () => {
+      window.dispatchEvent(new CustomEvent('cookie-consent:open'));
+    });
+  }
+  document.addEventListener('astro:page-load', initFooter);
 </script>

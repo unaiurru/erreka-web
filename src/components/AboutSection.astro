@@ -1,0 +1,63 @@
+---
+import { useTranslations, type Lang } from '@i18n/index';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="about-section container">
+  <div class="section-label" data-reveal>{t('home.about.label')}</div>
+  <div class="about">
+    <div class="about-text" data-reveal>
+      <h2 class="section-title">
+        {t('home.about.title_line1')}<br>
+        {t('home.about.title_line2')}
+      </h2>
+      <p>{t('home.about.p1')}</p>
+      <p>{t('home.about.p2')}</p>
+      <p>{t('home.about.p3')}</p>
+    </div>
+    <div class="about-img img-slot" data-slot="AMBIENTE · Foto vertical del interior con gente, barra o mesas" data-reveal data-reveal-delay="2"></div>
+  </div>
+</section>
+
+<style>
+  .about-section { padding: 6rem 2rem; }
+  .about {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .about-text p {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: var(--cream-soft);
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+  }
+  /* Drop-cap: la primera letra del primer párrafo en gran serif */
+  .about-text p:first-of-type::first-letter {
+    font-family: var(--font-serif);
+    font-weight: 600;
+    font-size: 4.5rem;
+    float: left;
+    line-height: 0.85;
+    padding: 0.4rem 0.6rem 0 0;
+    color: var(--copper);
+  }
+  .about-img {
+    aspect-ratio: 4/5;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 768px) {
+    .about { grid-template-columns: 1fr; gap: 2rem; }
+    .about-section { padding: 4rem 1.25rem; }
+  }
+</style>

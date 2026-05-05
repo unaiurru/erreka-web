@@ -1,0 +1,94 @@
+---
+import { useTranslations, type Lang, localizedPath } from '@i18n/index';
+import { getHighlights, getDishName } from '@content/menu';
+import DishCard from '@components/DishCard.astro';
+import Icon from '@components/Icon.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const highlights = getHighlights().slice(0, 6);
+
+const menuHref = lang === 'eu' ? '/eu/karta' : '/es/carta';
+---
+
+<section class="highlights-section container">
+  <div class="section-label" data-reveal>{t('home.highlights.label')}</div>
+  <h2 class="section-title" data-reveal data-reveal-delay="1">{t('home.highlights.title')}</h2>
+
+  <div class="highlights-grid">
+    {highlights.map((dish, i) => (
+      <div class="highlight-card" data-reveal data-reveal-delay={Math.min(i, 5).toString()}>
+        <div class="highlight-img img-slot" data-slot={`Foto · ${getDishName(dish, lang)}`}></div>
+        <DishCard dish={dish} lang={lang} />
+      </div>
+    ))}
+  </div>
+
+  <div class="highlights-cta" data-reveal>
+    <a href={menuHref} class="btn btn-secondary btn-with-icon">
+      {t('home.highlights.see_full_menu')}
+      <Icon name="arrow-right" size={16} />
+    </a>
+  </div>
+</section>
+
+<style>
+  .highlights-section {
+    padding: 6rem 2rem;
+  }
+  .highlights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+  .highlight-card {
+    background: var(--bg-card);
+    padding: 1.25rem;
+    border: 1px solid var(--line);
+    transition: transform 0.35s var(--ease-out-soft),
+                border-color 0.35s ease,
+                box-shadow 0.35s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Brillo sutil que cruza la card al hover */
+  .highlight-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(200, 116, 58, 0.08), transparent);
+    transition: left 0.7s var(--ease-out-soft);
+    pointer-events: none;
+  }
+  .highlight-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--copper);
+    box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+  }
+  .highlight-card:hover::before { left: 100%; }
+  .highlight-img {
+    aspect-ratio: 4/3;
+    margin-bottom: 1.25rem;
+  }
+  .highlights-cta {
+    text-align: center;
+    margin-top: 2rem;
+  }
+  .btn-with-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  @media (max-width: 768px) {
+    .highlights-section { padding: 4rem 1.25rem; }
+  }
+</style>

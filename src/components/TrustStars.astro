@@ -1,0 +1,85 @@
+---
+/**
+ * Trust signals: 5 estrellas + nota Google + total reseñas.
+ * Componente decorativo de hero / about.
+ */
+
+interface Props {
+  rating?: number;
+  reviews?: number;
+  source?: string;
+}
+
+const { rating = 4.7, reviews = 320, source = 'Google' } = Astro.props;
+
+// Renderizado fraccional sencillo: estrella entera = filled, decimal >= 0.5 = half
+const full = Math.floor(rating);
+const half = rating - full >= 0.5;
+const empty = 5 - full - (half ? 1 : 0);
+---
+
+<div class="trust">
+  <div class="stars" aria-hidden="true">
+    {Array.from({ length: full }).map(() => (
+      <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" class="star filled">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    ))}
+    {half && (
+      <svg viewBox="0 0 24 24" class="star half">
+        <defs>
+          <linearGradient id="halfStar">
+            <stop offset="50%" stop-color="currentColor"/>
+            <stop offset="50%" stop-color="transparent"/>
+          </linearGradient>
+        </defs>
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                 fill="url(#halfStar)" stroke="currentColor" stroke-width="1.2"/>
+      </svg>
+    )}
+    {Array.from({ length: empty }).map(() => (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="star empty">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    ))}
+  </div>
+  <span class="meta">
+    <strong>{rating.toLocaleString('es-ES', { minimumFractionDigits: 1 })}</strong>
+    <span class="sep">·</span>
+    {reviews}+ reseñas en {source}
+  </span>
+</div>
+
+<style>
+  .trust {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+    color: var(--cream-soft);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+  }
+  .stars {
+    display: inline-flex;
+    gap: 0.15rem;
+    color: var(--copper);
+  }
+  .star { width: 16px; height: 16px; }
+  .star.empty { opacity: 0.45; }
+
+  .meta {
+    color: var(--cream-mute);
+  }
+  .meta strong {
+    color: var(--cream);
+    font-weight: 600;
+    margin-right: 0.15rem;
+  }
+  .meta .sep {
+    color: var(--cream-mute);
+    margin: 0 0.35rem;
+    opacity: 0.5;
+  }
+</style>

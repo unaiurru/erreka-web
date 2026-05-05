@@ -1,0 +1,362 @@
+---
+/**
+ * Página de Carta — refactor unificado ES/EU.
+ * Mejoras vs. versión anterior:
+ *  · Sticky category nav con scroll-spy (subraya la sección activa).
+ *  · Filtros chip (sin gluten, vegetariano, sin lactosa) — client-side.
+ *    Usan los allergens del menu.json: lo que no contiene el allergen pasa el filtro.
+ *  · Reveal-on-scroll en cada plato.
+ *  · Numerales decorativos detrás de los títulos de sección.
+ */
+import { useTranslations, type Lang } from '@i18n/index';
+import { starters, burgers, novelties, desserts, type Allergen } from '@content/menu';
+import DishCard from '@components/DishCard.astro';
+import Icon from '@components/Icon.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const sections = [
+  { id: 'starters', title: t('menu_page.tabs.starters'), dishes: starters, num: '01' },
+  { id: 'burgers', title: t('menu_page.tabs.burgers'), dishes: burgers, num: '02', note: t('menu_page.burgers_note') },
+  { id: 'novelties', title: t('menu_page.tabs.novelties'), dishes: novelties, num: '03', note: t('menu_page.novelties_note') },
+  { id: 'desserts', title: t('menu_page.tabs.desserts'), dishes: desserts, num: '04' },
+];
+
+// Filtros disponibles. Cada filtro define qué alérgeno NO debe contener.
+type FilterDef = { id: string; label: string; excludeAllergens: Allergen[]; icon: 'wheat-off' | 'leaf' | 'sparkles' };
+const filters: FilterDef[] = lang === 'eu'
+  ? [
+      { id: 'gluten-free', label: 'Glutenik gabe', excludeAllergens: ['gluten'], icon: 'wheat-off' },
+      { id: 'lactose-free', label: 'Esnerik gabe', excludeAllergens: ['lacteos'], icon: 'sparkles' },
+    ]
+  : [
+      { id: 'gluten-free', label: 'Sin gluten', excludeAllergens: ['gluten'], icon: 'wheat-off' },
+      { id: 'lactose-free', label: 'Sin lácteos', excludeAllergens: ['lacteos'], icon: 'sparkles' },
+    ];
+
+const allLabel = lang === 'eu' ? 'Guztiak' : 'Todo';
+const noResultsText = lang === 'eu'
+  ? 'Filtro horiekin platerrik ez. Galdetu zalantzaren bat baduzu.'
+  : 'No hay platos con esos filtros. Pregúntanos si tienes dudas.';
+---
+
+<!-- Header -->
+<section class="page-header container">
+  <div class="section-label" data-reveal>{t('menu_page.label')}</div>
+  <h1 class="section-title" data-reveal data-reveal-delay="1">
+    {t('menu_page.title_line1')}<br>
+    {t('menu_page.title_line2')}
+  </h1>
+  <p class="page-intro" data-reveal data-reveal-delay="2">{t('menu_page.intro')}</p>
+  <p class="menu-hint" data-reveal data-reveal-delay="3">{t('menu_page.click_hint')}</p>
+</section>
+
+<!-- Sticky bar con anchors + filtros -->
+<div class="menu-toolbar" id="menuToolbar">
+  <nav class="menu-anchors" id="menuAnchors" aria-label="Categorías">
+    {sections.map(s => (
+      <a href={`#${s.id}`} data-anchor={s.id}>{s.title}</a>
+    ))}
+  </nav>
+
+  <div class="menu-filters" role="group" aria-label="Filtros">
+    <button type="button" class="filter-chip active" data-filter="all">
+      <span>{allLabel}</span>
+    </button>
+    {filters.map(f => (
+      <button type="button" class="filter-chip" data-filter={f.id} data-exclude={f.excludeAllergens.join(',')}>
+        <Icon name={f.icon} size={14} />
+        <span>{f.label}</span>
+      </button>
+    ))}
+  </div>
+</div>
+
+<div class="menu-content" id="menuContent">
+  {sections.map(section => (
+    <section class="menu-section container" id={section.id}>
+      <h2 class="menu-section-title">
+        <span class="section-num" aria-hidden="true">{section.num}</span>
+        <span class="section-name">{section.title}</span>
+      </h2>
+      <div class="menu-grid">
+        {section.dishes.map(dish => (
+          <div
+            class="menu-grid-item"
+            data-reveal
+            data-allergens={(dish.allergens || []).join(',')}
+          >
+            <DishCard dish={dish} lang={lang} />
+          </div>
+        ))}
+      </div>
+      {section.note && <div class="menu-note">{section.note}</div>}
+    </section>
+  ))}
+
+  <div class="menu-empty" id="menuEmpty" hidden>
+    {noResultsText}
+  </div>
+</div>
+
+<style>
+  .page-header {
+    padding: 4rem var(--gutter) 1.5rem;
+  }
+  .page-intro {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    color: var(--cream-soft);
+    max-width: 640px;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    font-weight: 300;
+  }
+  .menu-hint {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cream-mute);
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .menu-hint::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: var(--copper);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Sticky toolbar */
+  .menu-toolbar {
+    position: sticky;
+    top: var(--nav-height);
+    z-index: 50;
+    background: rgba(22, 19, 16, 0.92);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 1rem var(--gutter);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 1.5rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .menu-anchors {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .menu-anchors a {
+    padding: 0.5rem 1rem;
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    letter-spacing: 0.15em;
+    color: var(--cream-soft);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  .menu-anchors a:hover,
+  .menu-anchors a.is-active {
+    color: var(--copper);
+    border-color: var(--copper);
+  }
+  .menu-anchors a.is-active {
+    background: rgba(200, 116, 58, 0.08);
+  }
+
+  /* Filter chips */
+  .menu-filters {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 0.85rem;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--cream-soft);
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .filter-chip:hover {
+    border-color: var(--copper);
+    color: var(--cream);
+  }
+  .filter-chip.active {
+    background: var(--copper);
+    color: var(--bg);
+    border-color: var(--copper);
+    font-weight: 600;
+  }
+
+  /* Sections */
+  .menu-section {
+    padding: 4rem var(--gutter);
+    scroll-margin-top: calc(var(--nav-height) + 80px);
+  }
+  .menu-section-title {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3rem);
+    letter-spacing: 0.05em;
+    color: var(--copper);
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 1rem;
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  .section-num {
+    font-size: 0.85em;
+    color: var(--copper);
+    opacity: 0.35;
+    letter-spacing: 0.1em;
+  }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem 4rem;
+  }
+  .menu-grid-item {
+    transition: opacity 0.3s ease;
+  }
+  .menu-grid-item.is-hidden {
+    display: none;
+  }
+  /* Sección entera oculta cuando no hay items visibles */
+  .menu-section.is-empty {
+    display: none;
+  }
+
+  .menu-note {
+    margin-top: 3rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--bg-card);
+    border-left: 3px solid var(--copper);
+    font-family: var(--font-serif);
+    font-style: italic;
+    color: var(--cream-soft);
+    font-size: 0.95rem;
+  }
+
+  .menu-empty {
+    text-align: center;
+    padding: 4rem 1.5rem;
+    color: var(--cream-mute);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 768px) {
+    .menu-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    .page-header { padding: 2rem 1.25rem 1rem; }
+    .menu-section { padding: 3rem 1.25rem; }
+    .menu-toolbar {
+      padding: 0.75rem 1.25rem;
+      gap: 0.75rem;
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .menu-anchors,
+    .menu-filters {
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 0.25rem;
+    }
+    .menu-anchors::-webkit-scrollbar,
+    .menu-filters::-webkit-scrollbar { display: none; }
+    .menu-anchors a, .filter-chip { white-space: nowrap; flex-shrink: 0; }
+  }
+</style>
+
+<script>
+  /**
+   * Carta interactiva:
+   *  · Filtros: ocultan platos según data-allergens.
+   *  · Scroll-spy: marca la sección visible en la barra de anchors.
+   */
+  function initMenu() {
+    const filterChips = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+    const items = document.querySelectorAll<HTMLElement>('.menu-grid-item');
+    const sections = document.querySelectorAll<HTMLElement>('.menu-section');
+    const anchors = document.querySelectorAll<HTMLAnchorElement>('[data-anchor]');
+    const empty = document.getElementById('menuEmpty');
+
+    // Filtros
+    filterChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        filterChips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+
+        const filter = chip.dataset.filter || 'all';
+        const exclude = (chip.dataset.exclude || '').split(',').filter(Boolean);
+
+        items.forEach(item => {
+          if (filter === 'all') {
+            item.classList.remove('is-hidden');
+            return;
+          }
+          const allergens = (item.dataset.allergens || '').split(',').filter(Boolean);
+          // El plato se muestra si NINGUNO de los excluidos está en sus allergens
+          const conflicts = exclude.some(ex => allergens.includes(ex));
+          item.classList.toggle('is-hidden', conflicts);
+        });
+
+        // Ocultar sección si todos sus items están ocultos
+        let anyVisible = false;
+        sections.forEach(section => {
+          const visible = section.querySelectorAll('.menu-grid-item:not(.is-hidden)').length;
+          section.classList.toggle('is-empty', visible === 0);
+          if (visible > 0) anyVisible = true;
+        });
+
+        if (empty) empty.hidden = anyVisible;
+      });
+    });
+
+    // Scroll-spy
+    if ('IntersectionObserver' in window) {
+      const spy = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (!entry.isIntersecting) return;
+          const id = entry.target.id;
+          anchors.forEach(a => {
+            a.classList.toggle('is-active', a.dataset.anchor === id);
+          });
+        });
+      }, {
+        rootMargin: '-30% 0px -55% 0px',
+        threshold: 0,
+      });
+      sections.forEach(s => spy.observe(s));
+    }
+  }
+
+  document.addEventListener('astro:page-load', initMenu);
+</script>
