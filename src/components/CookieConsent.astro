@@ -1,24 +1,19 @@
 ---
 /**
- * Banner de consentimiento de cookies — cumple guía AEPD julio 2023:
- *  · "Aceptar todas" y "Rechazar todas" con prominencia equivalente.
- *  · "Configurar" para granularidad.
- *  · Por defecto, sin cookies de terceros instaladas.
- *  · El consentimiento es revocable desde un botón flotante o desde la página
- *    de Política de Cookies (escuchamos el evento 'cookie-consent:open').
+ * Banner de consentimiento de cookies — cumple guía AEPD julio 2023.
  *
  * Categorías:
- *  · necessary  — siempre activas (no se pueden desactivar).
- *  · maps       — Google Maps (solo en página de contacto).
- *  · analytics  — placeholder para futuro (no se carga nada hoy).
- *  · marketing  — placeholder para futuro (no se carga nada hoy).
+ *  · necessary  — siempre activas.
+ *  · maps       — Google Maps (página de contacto).
+ *  · analytics  — placeholder.
+ *  · marketing  — placeholder.
  *
  * El consentimiento se publica al resto del sitio mediante:
  *   · localStorage (clave `erreka_cookie_consent`).
- *   · CustomEvent global `cookie-consent:change` con detail = {necessary, maps, analytics, marketing}.
+ *   · CustomEvent global `cookie-consent:change`.
  *
- * Otros componentes (p.ej. el iframe del mapa) escuchan ese evento para cargar
- * o no cargar contenido.
+ * Robusto frente a ViewTransitions: usa event delegation en document y
+ * re-inicializa el estado en cada `astro:page-load`.
  */
 
 import { useTranslations, type Lang, localizedPath } from '@i18n/index';
@@ -27,7 +22,6 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
-// Rutas de Política de Cookies / Privacidad por idioma
 const cookiesUrl = lang === 'es' ? '/es/cookies' : '/eu/cookieak';
 const privacyUrl = lang === 'es' ? '/es/privacidad' : '/eu/pribatutasuna';
 ---
@@ -137,6 +131,7 @@ const privacyUrl = lang === 'es' ? '/es/privacidad' : '/eu/pribatutasuna';
   type="button"
   aria-label={t('cookies.reopen_aria')}
   title={t('cookies.reopen_aria')}
+  data-cc="config"
   hidden
 >
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -149,27 +144,22 @@ const privacyUrl = lang === 'es' ? '/es/privacidad' : '/eu/pribatutasuna';
 </button>
 
 <style>
-  /* Forzar que [hidden] funcione: como .cc-panel y .cc-reopen tienen
-     display: flex, el user-agent rule [hidden]{display:none} se pisa.
-     Hay que reafirmarlo aquí. */
   .cc-banner[hidden],
   .cc-panel[hidden],
   .cc-reopen[hidden] {
     display: none !important;
   }
 
-  /* Banner inferior */
   .cc-banner {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 200; /* por encima del banner DEMO */
+    z-index: 200;
     background: var(--bg-deep);
     border-top: 1px solid var(--copper);
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
     padding: 1.5rem var(--gutter) calc(1.5rem + 28px);
-    /* el padding extra deja sitio al banner DEMO de 28px aproximadamente */
   }
   .cc-banner-inner {
     max-width: var(--container-max);
@@ -213,7 +203,6 @@ const privacyUrl = lang === 'es' ? '/es/privacidad' : '/eu/pribatutasuna';
     white-space: nowrap;
   }
 
-  /* Panel modal */
   .cc-panel {
     position: fixed;
     inset: 0;
@@ -280,10 +269,9 @@ const privacyUrl = lang === 'es' ? '/es/privacidad' : '/eu/pribatutasuna';
     line-height: 1.5;
   }
 
-  /* Botón flotante de reabrir */
   .cc-reopen {
     position: fixed;
-    bottom: 84px; /* deja espacio sobre WhatsAppFloat */
+    bottom: 84px;
     left: 24px;
     z-index: 90;
     width: 40px;
@@ -321,14 +309,20 @@ const privacyUrl = lang === 'es' ? '/es/privacidad' : '/eu/pribatutasuna';
 </style>
 
 <script>
-  /* ---------------- runtime ---------------- */
+  /**
+   * Cookie consent — robusto frente a ViewTransitions.
+   *  · Listener global delegado en document → sobrevive a swaps de DOM.
+   *  · Estado se restaura en cada `astro:page-load` (porque el banner es parte
+   *    del contenido swappeado).
+   *  · Flag `__erreka_cc_init` evita doble-binding del listener global.
+   */
   type Consent = {
     necessary: true;
     maps: boolean;
     analytics: boolean;
     marketing: boolean;
-    ts: number;        // timestamp de aceptación
-    v: number;         // versión del esquema
+    ts: number;
+    v: number;
   };
 
   const STORAGE_KEY = 'erreka_cookie_consent';
@@ -341,7 +335,7 @@ const privacyUrl = lang === 'es' ? '/es/privacidad' : '/eu/pribatutasuna';
       if (!raw) return null;
       const parsed = JSON.parse(raw) as Consent;
       if (parsed.v !== SCHEMA_VERSION) return null;
-      if (Date.now() - parsed.ts > ONE_YEAR_MS) return null; // re-pedir consentimiento al año
+      if (Date.now() - parsed.ts > ONE_YEAR_MS) return null;
       return parsed;
     } catch { return null; }
   }
@@ -364,27 +358,29 @@ const privacyUrl = lang === 'es' ? '/es/privacidad' : '/eu/pribatutasuna';
     localStorage.removeItem(STORAGE_KEY);
   }
 
-  const banner = document.getElementById('cc-banner');
-  const panel = document.getElementById('cc-panel');
-  const reopen = document.getElementById('cc-reopen');
+  // Lookup fresco en cada acción — nunca cachear referencias del DOM porque
+  // ViewTransitions las invalida al navegar.
+  const $ = (id: string) => document.getElementById(id);
 
-  function showBanner() { banner?.removeAttribute('hidden'); }
-  function hideBanner() { banner?.setAttribute('hidden', ''); }
+  function showBanner() { $('cc-banner')?.removeAttribute('hidden'); }
+  function hideBanner() { $('cc-banner')?.setAttribute('hidden', ''); }
   function showPanel(consent: Consent | null) {
-    panel?.removeAttribute('hidden');
+    const panel = $('cc-panel');
+    if (!panel) return;
+    panel.removeAttribute('hidden');
     document.body.style.overflow = 'hidden';
-    // Pre-rellenar checkboxes con el estado actual
     const c = consent ?? { maps: false, analytics: false, marketing: false };
-    panel?.querySelectorAll<HTMLInputElement>('[data-cc-cat]').forEach(input => {
+    panel.querySelectorAll<HTMLInputElement>('[data-cc-cat]').forEach(input => {
       const cat = input.dataset.ccCat as keyof typeof c;
-      if (cat !== 'necessary') input.checked = !!(c as any)[cat];
+      if (cat !== 'necessary' as any) input.checked = !!(c as any)[cat];
     });
   }
   function hidePanel() {
-    panel?.setAttribute('hidden', '');
+    $('cc-panel')?.setAttribute('hidden', '');
     document.body.style.overflow = '';
   }
-  function showReopen() { reopen?.removeAttribute('hidden'); }
+  function showReopen() { $('cc-reopen')?.removeAttribute('hidden'); }
+  function hideReopen() { $('cc-reopen')?.setAttribute('hidden', ''); }
 
   function applyConsent(c: Consent) {
     hideBanner();
@@ -392,54 +388,72 @@ const privacyUrl = lang === 'es' ? '/es/privacidad' : '/eu/pribatutasuna';
     showReopen();
   }
 
-  // Estado inicial
-  const stored = read();
-  if (stored) {
-    applyConsent(stored);
-    // Re-emitir el estado para que componentes que se monten después lo conozcan
-    window.dispatchEvent(new CustomEvent('cookie-consent:change', { detail: stored }));
-  } else {
-    showBanner();
+  function handleAction(action: string) {
+    switch (action) {
+      case 'accept': {
+        const v = write({ maps: true, analytics: true, marketing: true });
+        applyConsent(v);
+        break;
+      }
+      case 'reject': {
+        const v = write({ maps: false, analytics: false, marketing: false });
+        applyConsent(v);
+        break;
+      }
+      case 'config': {
+        showPanel(read());
+        break;
+      }
+      case 'save': {
+        const get = (cat: string) =>
+          ($('cc-panel')?.querySelector<HTMLInputElement>(`[data-cc-cat="${cat}"]`)?.checked) ?? false;
+        const v = write({
+          maps: get('maps'),
+          analytics: get('analytics'),
+          marketing: get('marketing'),
+        });
+        applyConsent(v);
+        break;
+      }
+    }
   }
 
-  // Acciones
-  document.querySelectorAll<HTMLButtonElement>('[data-cc]').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const action = btn.dataset.cc;
-      switch (action) {
-        case 'accept': {
-          const v = write({ maps: true, analytics: true, marketing: true });
-          applyConsent(v);
-          break;
-        }
-        case 'reject': {
-          const v = write({ maps: false, analytics: false, marketing: false });
-          applyConsent(v);
-          break;
-        }
-        case 'config': {
-          showPanel(read());
-          break;
-        }
-        case 'save': {
-          const get = (cat: string) =>
-            (panel?.querySelector<HTMLInputElement>(`[data-cc-cat="${cat}"]`)?.checked) ?? false;
-          const v = write({
-            maps: get('maps'),
-            analytics: get('analytics'),
-            marketing: get('marketing'),
-          });
-          applyConsent(v);
-          break;
-        }
-      }
+  /** Restaura el estado visible del banner/reopen según localStorage.
+   *  Se llama al cargar la página y tras cada View Transition. */
+  function restoreState() {
+    const stored = read();
+    if (stored) {
+      hideBanner();
+      hidePanel();
+      showReopen();
+      window.dispatchEvent(new CustomEvent('cookie-consent:change', { detail: stored }));
+    } else {
+      hideReopen();
+      hidePanel();
+      showBanner();
+    }
+  }
+
+  // Listeners GLOBALES — solo se registran una vez por sesión.
+  if (!(window as any).__erreka_cc_init) {
+    (window as any).__erreka_cc_init = true;
+
+    // Delegation: cualquier click en un elemento con [data-cc="<action>"].
+    document.addEventListener('click', (e) => {
+      const target = e.target instanceof Element ? e.target.closest('[data-cc]') : null;
+      if (!target) return;
+      const action = (target as HTMLElement).dataset.cc;
+      if (action) handleAction(action);
     });
-  });
 
-  // Reabrir preferencias (botón flotante o desde la página de cookies)
-  reopen?.addEventListener('click', () => showPanel(read()));
-  window.addEventListener('cookie-consent:open', () => showPanel(read()));
+    // Evento público: que el footer u otros sitios puedan abrir el panel.
+    window.addEventListener('cookie-consent:open', () => showPanel(read()));
 
-  // Helper público en window para depuración / botón "borrar consentimiento"
-  (window as any).errekaCookieConsent = { read, clear, write };
+    // Helper público en window para depuración.
+    (window as any).errekaCookieConsent = { read, clear, write };
+  }
+
+  // Restaurar estado inicial Y en cada View Transition.
+  restoreState();
+  document.addEventListener('astro:page-load', restoreState);
 </script>

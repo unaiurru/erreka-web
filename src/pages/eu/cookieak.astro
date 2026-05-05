@@ -43,15 +43,13 @@ const data = cookies.eu;
     </table>
 
     <p style="margin-top:2.5rem;">
-      <button class="btn btn-secondary" id="reopenCookies" type="button">
+      <!--
+        data-cc="config" → recogido por el listener delegado global
+        de CookieConsent. Sobrevive a ViewTransitions.
+      -->
+      <button class="btn btn-secondary" type="button" data-cc="config">
         {t('legal.cookies.reopen')}
       </button>
     </p>
   </LegalPage>
 </Base>
-
-<script>
-  document.getElementById('reopenCookies')?.addEventListener('click', () => {
-    window.dispatchEvent(new CustomEvent('cookie-consent:open'));
-  });
-</script>

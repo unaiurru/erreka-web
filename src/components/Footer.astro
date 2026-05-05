@@ -103,7 +103,11 @@ const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(restaurant.addr
       <span class="sep">·</span>
       <a href={legalRoutes.cookies}>{t('footer.cookies')}</a>
       <span class="sep">·</span>
-      <button type="button" class="footer-link-btn" id="footerCookieConfig">
+      <!--
+        data-cc="config" → recogido por el listener delegado global de
+        CookieConsent.astro. Robusto frente a ViewTransitions.
+      -->
+      <button type="button" class="footer-link-btn" data-cc="config">
         {t('footer.config_cookies')}
       </button>
     </nav>
@@ -275,11 +279,10 @@ const mapsUrl = `https://maps.google.com/?q=${encodeURIComponent(restaurant.addr
   }
 </style>
 
-<script>
-  function initFooter() {
-    document.getElementById('footerCookieConfig')?.addEventListener('click', () => {
-      window.dispatchEvent(new CustomEvent('cookie-consent:open'));
-    });
-  }
-  document.addEventListener('astro:page-load', initFooter);
-</script>
+<!--
+  Antes había aquí un script que escuchaba el click del botón "Configurar
+  cookies" y disparaba `cookie-consent:open`. Ahora el botón usa
+  `data-cc="config"` y lo recoge directamente el listener delegado global
+  de CookieConsent.astro — más simple y robusto frente a ViewTransitions.
+-->
+
