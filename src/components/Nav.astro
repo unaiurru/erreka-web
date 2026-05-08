@@ -172,20 +172,37 @@ function urlFor(targetLang: Lang, basePath: string) {
     flex-shrink: 0;
   }
 
+  /* Switcher idioma — pill compacto bien encuadrado.
+     Antes el fondo del botón activo se desbordaba ligeramente del borde
+     redondeado por la combinación border + border-radius + overflow:hidden
+     en flex. Ahora alineamos altura, paddings y line-height para que el
+     fondo quede perfectamente clipado dentro del borde. */
   .lang-switch {
-    display: flex;
+    display: inline-flex;
+    align-items: stretch;
     border: 1px solid var(--line);
-    border-radius: 2px;
+    border-radius: 4px;
     overflow: hidden;
+    height: 30px;
+    line-height: 1;
+    flex-shrink: 0;
   }
   .lang-btn {
-    padding: 0.45rem 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    padding: 0 0.6rem;
     font-family: var(--font-body);
     font-size: 0.7rem;
     letter-spacing: 0.15em;
     font-weight: 500;
     color: var(--cream-soft);
-    transition: all 0.2s ease;
+    background: transparent;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .lang-btn + .lang-btn {
+    border-left: 1px solid var(--line);
   }
   .lang-btn:hover { color: var(--cream); }
   .lang-btn.active {
@@ -282,9 +299,12 @@ function urlFor(targetLang: Lang, basePath: string) {
     letter-spacing: 0.1em;
   }
 
-  /* Ocultar OpenStatus en pantallas medianas (entre 900 y 1100 evita apretujar) */
+  /* Ocultar el pill "Abierto/Cerrado" de la nav en pantallas medianas y
+     móviles. Se usa `:global(...)` porque el componente OpenStatus tiene
+     su propio scope CSS de Astro y el selector con scope cruzado no
+     matchearía. La info sigue presente en el menú móvil al abrirlo. */
   @media (max-width: 1100px) {
-    .nav-right > .open-status { display: none; }
+    .nav-right > :global(.open-status) { display: none; }
   }
 
   @media (max-width: 900px) {
