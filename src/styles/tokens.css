@@ -45,19 +45,57 @@
   --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Reset mínimo */
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+/* ============================================
+   RESET MÍNIMO + BASELINE ANTI-OVERFLOW
+   ----------------------------------------------
+   · box-sizing global: paddings/borders nunca añaden ancho extra.
+   · `min-width: 0` global: por defecto los flex/grid items no se
+     encogen por debajo de su contenido intrínseco; esto lo permite
+     y elimina la causa #1 de overflow horizontal en móvil.
+   · html y body con width 100% + overflow-x clip: garantiza que NINGÚN
+     descendiente pueda forzar scroll horizontal a nivel de documento.
+     `clip` es preferible a `hidden` porque no rompe `position: sticky`
+     en ancestros. Fallback `hidden` para navegadores antiguos.
+   · Media (img, video, iframe, svg, canvas, picture) limitada a 100%
+     del contenedor — evita los overflows clásicos por imágenes/vídeos.
+   ============================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+html {
+  scroll-behavior: smooth;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;        /* fallback */
+  overflow-x: clip;           /* preferido: no rompe sticky */
+}
 body {
   background: var(--bg);
   color: var(--cream);
   font-family: var(--font-body);
   font-weight: 300;
   line-height: 1.6;
-  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;        /* fallback */
+  overflow-x: clip;           /* preferido */
   min-height: 100vh;
   position: relative;
+  /* Cortar palabras larguísimas (URLs, emails, etc.) en vez de empujar el layout */
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
+
+/* Media responsive por defecto — evita overflow por imágenes/vídeos/embeds.
+   No se aplica `height: auto` global porque algunos componentes (mapa,
+   reproductores) necesitan height: 100%; basta con limitar el ancho. */
+img, video, canvas, picture, svg, iframe, embed, object {
+  max-width: 100%;
+}
+img, video, canvas, picture { height: auto; }
 
 /* ============================================
    CAPA DE GRANO — textura papel/lino sutil
@@ -75,7 +113,7 @@ body::before {
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.7 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 
-img { max-width: 100%; display: block; }
+img { display: block; }
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; }
 
@@ -285,11 +323,22 @@ textarea:focus-visible {
   font-weight: 600;
 }
 
-/* Responsive */
+/* ============================================
+   RESPONSIVE — reducir gutters de forma fluida
+   --------------------------------------------
+   · Tablet/mobile (<768px): gutter 1.25rem.
+   · Móviles muy estrechos (<=400px): gutter 1rem.
+   · Ultra-estrechos (<=360px): gutter 0.85rem para que el contenido
+     respire pero el texto siga centrado dentro del viewport.
+   ============================================ */
 @media (max-width: 768px) {
-  :root {
-    --gutter: 1.25rem;
-  }
+  :root { --gutter: 1.25rem; }
+}
+@media (max-width: 400px) {
+  :root { --gutter: 1rem; }
+}
+@media (max-width: 360px) {
+  :root { --gutter: 0.85rem; }
 }
 
 /* ============================================

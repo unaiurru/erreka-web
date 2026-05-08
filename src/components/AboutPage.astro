@@ -224,7 +224,9 @@ const pullQuote = lang === 'eu'
   }
   .values-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    /* `min(100%, 220px)` previene overflow en viewports muy estrechos:
+       si el viewport es <220px, la columna se reduce al 100% disponible. */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
     gap: 2rem;
     margin-top: 3rem;
   }

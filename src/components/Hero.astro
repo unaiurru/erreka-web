@@ -113,10 +113,14 @@ const taglineWords = t('home.hero.tagline').split(' ');
   }
   .hero-title {
     font-family: var(--font-display);
-    font-size: clamp(3.5rem, 12vw, 9rem);
+    /* Fluid type: en 320px ≈ 2.75rem (44px) — "MEET POINT" cabe en una línea
+       sin desbordar; en desktop sube hasta 9rem. */
+    font-size: clamp(2.75rem, 12vw, 9rem);
     line-height: 0.9;
     letter-spacing: 0.02em;
     color: var(--cream);
+    /* Permite que cada línea encoja si se quedara sin espacio */
+    overflow-wrap: anywhere;
   }
   .hero-line {
     display: block;

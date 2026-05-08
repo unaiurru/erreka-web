@@ -33,8 +33,8 @@ function urlFor(targetLang: Lang, basePath: string) {
 ---
 
 <nav class="nav" id="siteNav" data-scrolled="false">
-  <a href={urlFor(lang, '/')} class="nav-logo">
-    ERREKA <span>·</span> MEET POINT
+  <a href={urlFor(lang, '/')} class="nav-logo" aria-label="Erreka Meet Point">
+    <span class="nav-logo-main">ERREKA</span><span class="nav-logo-sep">·</span><span class="nav-logo-sub">MEET POINT</span>
   </a>
 
   <ul class="nav-links">
@@ -93,6 +93,9 @@ function urlFor(targetLang: Lang, basePath: string) {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    /* Anti-overflow: nav fija a viewport y nunca empuja el ancho del documento */
+    max-width: 100%;
+    gap: 0.5rem;
     background: rgba(22, 19, 16, 0.7);
     backdrop-filter: blur(14px) saturate(140%);
     -webkit-backdrop-filter: blur(14px) saturate(140%);
@@ -107,13 +110,22 @@ function urlFor(targetLang: Lang, basePath: string) {
 
   .nav-logo {
     font-family: var(--font-display);
-    font-size: 1.5rem;
-    letter-spacing: 0.1em;
+    /* Tamaño fluido — encoge en pantallas estrechas para no empujar el layout */
+    font-size: clamp(1.05rem, 4.2vw, 1.5rem);
+    letter-spacing: 0.08em;
     color: var(--cream);
     transition: color 0.2s ease;
+    /* Permite que el flex child se encoja por debajo de su intrínseco */
+    min-width: 0;
+    flex-shrink: 1;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.4em;
   }
   .nav-logo:hover { color: var(--copper-bright); }
-  .nav-logo span { color: var(--copper); }
+  .nav-logo .nav-logo-sep { color: var(--copper); }
+  .nav-logo .nav-logo-sub { color: var(--cream); }
 
   .nav-links {
     display: flex;
@@ -155,6 +167,9 @@ function urlFor(targetLang: Lang, basePath: string) {
     display: flex;
     gap: 0.75rem;
     align-items: center;
+    /* Anti-overflow: nunca empujar al logo */
+    min-width: 0;
+    flex-shrink: 0;
   }
 
   .lang-switch {
@@ -276,6 +291,15 @@ function urlFor(targetLang: Lang, basePath: string) {
     .nav-links { display: none; }
     .nav-cta { display: none; }
     .nav-burger { display: flex; }
+  }
+
+  /* Móviles muy estrechos: ocultamos "MEET POINT" para que la nav no empuje
+     y se vea limpia. "ERREKA · " se mantiene como marca principal. */
+  @media (max-width: 420px) {
+    .nav-logo .nav-logo-sub { display: none; }
+    .nav-logo .nav-logo-sep { display: none; }
+    .nav { gap: 0.4rem; }
+    .nav-right { gap: 0.5rem; }
   }
 </style>
 

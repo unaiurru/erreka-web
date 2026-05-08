@@ -37,12 +37,17 @@ const menuHref = lang === 'eu' ? '/eu/karta' : '/es/carta';
 </section>
 
 <style>
+  /* Padding horizontal con --gutter para coherencia y para que en mobile no
+     se desborde el contenedor por usar 2rem fijos. */
   .highlights-section {
-    padding: 6rem 2rem;
+    padding: 6rem var(--gutter);
   }
   .highlights-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    /* `min(100%, 280px)` evita el overflow clásico de auto-fit en viewports
+       más estrechos que el min de la columna (≤280px). En 320px una sola
+       tarjeta ocupa el 100% disponible sin desbordar. */
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
     gap: 2rem;
     margin-bottom: 3rem;
   }
@@ -89,6 +94,6 @@ const menuHref = lang === 'eu' ? '/eu/karta' : '/es/carta';
   }
 
   @media (max-width: 768px) {
-    .highlights-section { padding: 4rem 1.25rem; }
+    .highlights-section { padding: 4rem var(--gutter); }
   }
 </style>
